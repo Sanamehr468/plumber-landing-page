@@ -106,7 +106,7 @@ export default function Home() {
   };
 
   return (
-    <main>
+    <main id="top">
       <div className="topbar"><div className="topbar-inner">
         <span>📍 Serving Karachi • <b>Licensed &amp; Insured</b> • Licence ref: KHI-PLM-2024-1187 (test)</span>
         <span><span className="live-dot" /> 3 technicians currently dispatched in DHA / Clifton • 24/7: <b>+92 300 0000000 (test)</b></span>
@@ -207,14 +207,16 @@ export default function Home() {
         <motion.div layout className="grid">
           <AnimatePresence mode="popLayout">
             {filteredServices.map((s, i) => (
-              <motion.div key={s.title} layout className="card" custom={i} initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} exit={{ opacity: 0, scale: 0.96 }}>
+              <motion.div key={s.title} id={`service-${s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} layout className={`card service-card cat-${s.cat.toLowerCase()}`} custom={i} initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} exit={{ opacity: 0, scale: 0.96 }}>
                 <div className="icon">{s.icon}</div>
-                <span className="tag">{s.cat}</span>
+                <span className="tag">{s.cat}</span>{s.title.includes("Leak") && <span className="card-badge">Most booked</span>}
                 <h3>{s.title}</h3><p>{s.desc}</p>
                 {s.badge && <div className="badge-box">{s.badge}</div>}
                 <ul className="includes">{s.includes.map((x) => <li key={x}>✓ {x}</li>)}</ul>
-                <div><span className="from">From {s.from}</span> · {s.time}</div>
-                <button className="btn btn-navy btn-sm" style={{ marginTop: 14 }} onClick={() => chooseService(s.title)}>Book this service →</button>
+                <div className="price-footer">
+                  <div><span className="price-label">Starting from</span><span className="price-value">{s.from}</span><span className="small"> · {s.time}</span></div>
+                  <button className="btn btn-navy btn-sm" onClick={() => chooseService(s.title)}>Book this service →</button>
+                </div>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -362,11 +364,44 @@ export default function Home() {
         </div>
       </div></section>
 
-      <footer className="footer"><div className="footer-inner">
-        <div><b>FlowFix Plumbing</b><br />A fictional test business, built to demonstrate a professional plumber landing page.<br />Email: hello@flowfix.example • Phone: +92 300 0000000 (test number)<br />Licence ref: KHI-PLM-2024-1187 (test)</div>
-        <div><b>Services</b><br />Leak repair • Drain cleaning • Water heaters<br />Pump &amp; motor • Fitting • Repiping • Commercial</div>
-        <div><b>Hours</b><br />Emergency: 24/7<br />Scheduled: Mon–Sat, 8am–8pm</div>
-        <div><b>Built with</b><br />Next.js • Framer Motion • Design by Gemini (AI Studio) • Deployed on Vercel</div>
+      <footer className="footer"><div className="footer-grid">
+        <div>
+          <div className="logo" style={{ color: "#fff" }}>FlowFix <span>Plumbing</span></div>
+          <p style={{ color: "#9fb0c8" }}>The plumber who actually shows up on time. Transparent prices, verified technicians, and a 12-month guarantee across Karachi.</p>
+          <p style={{ color: "#9fb0c8" }}>★★★★★ <b style={{ color: "#fff" }}>4.9</b> · 2,400+ reviews (demo data)<br />Licensed &amp; Insured · Licence ref: KHI-PLM-2024-1187 (test)</p>
+        </div>
+        <div>
+          <h3>Services</h3>
+          <ul className="footer-links">
+            <li><a href="#service-leak-detection-repair">Leak detection &amp; repair</a></li>
+            <li><a href="#service-drain-cleaning-unblocking">Drain cleaning &amp; unblocking</a></li>
+            <li><a href="#service-water-heaters-geysers">Water heaters &amp; geysers</a></li>
+            <li><a href="#service-water-pump-motor-repair">Water pump &amp; motor repair</a></li>
+            <li><a href="#service-bathroom-kitchen-fitting">Bathroom &amp; kitchen fitting</a></li>
+            <li><a href="#service-pipe-replacement-repiping">Pipe replacement &amp; repiping</a></li>
+            <li><a href="#service-commercial-plumbing">Commercial plumbing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Help</h3>
+          <ul className="footer-links">
+            <li><a href="#pricing">Upfront pricing</a></li>
+            <li><a href="#areas">Service areas &amp; response times</a></li>
+            <li><a href="#reviews">Reviews &amp; rating breakdown</a></li>
+            <li><a href="#faq">FAQs</a></li>
+            <li><a href="#why">On-time guarantee</a></li>
+            <li><a href="#book">Book a plumber</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <p style={{ color: "#9fb0c8" }}>📞 <a href="tel:+923000000000" style={{ color: "#fff", fontWeight: 800 }}>+92 300 0000000 (test)</a><br />✉️ hello@flowfix.example<br />Emergency: 24/7<br />Scheduled: Mon–Sat, 8am–8pm</p>
+          <a className="btn btn-orange btn-sm" href="tel:+923000000000">🚨 Emergency — call now</a>
+        </div>
+      </div>
+      <div className="footer-bottom">
+        <span>Fictional test business — not a real plumber. Built with Next.js, Framer Motion, design input from Gemini (AI Studio), deployed on Vercel.</span>
+        <a href="#top">Back to top ↑</a>
       </div></footer>
 
       <div className="sticky-bar">

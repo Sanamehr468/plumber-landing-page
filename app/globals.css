@@ -159,3 +159,49 @@ a{color:inherit;text-decoration:none}
 .steps{position:relative}
 .steps::before{content:"";position:absolute;top:52px;left:12%;right:12%;border-top:2px dashed #cbd5e1;z-index:0}
 .steps .card{position:relative;z-index:1}
+.grid{grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
+.service-card{display:flex;flex-direction:column;border-top:4px solid var(--line);overflow:hidden}
+.cat-emergency{border-top-color:var(--orange)}
+.cat-home{border-top-color:var(--teal)}
+.cat-commercial{border-top-color:var(--navy)}
+.cat-emergency .icon{background:#fff1ea;color:#e05e00}
+.cat-home .icon{background:#e6f6f6;color:var(--teal-dark)}
+.cat-commercial .icon{background:#eef3fb;color:var(--navy)}
+.price-footer{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.price-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:800}
+.price-value{font-size:20px;font-weight:900;color:var(--navy)}
+.card-badge{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:900;padding:4px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+@media(hover:hover){.card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(16,35,63,.12)}}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:28px;max-width:1180px;margin:0 auto;padding:48px 20px 32px}
+.footer h3{color:#fff;font-size:15px;margin:0 0 12px}
+.footer-links{list-style:none;padding:0;margin:0}
+.footer-links li{margin-bottom:10px}
+.footer-links a{color:#9fb0c8}
+.footer-links a:hover{color:#fff;text-decoration:underline}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.15);max-width:1180px;margin:0 auto;padding:16px 20px 28px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:#9fb0c8}
+.footer-bottom a{color:#fff;font-weight:800}
+@media(max-width:900){
+  .steps::before{display:none}
+  .footer{padding-bottom:84px}
+  .hero-inner{padding:40px 20px 48px}
+  .section{padding:48px 20px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560){
+  .hero h1{font-size:34px}
+  .hero-phone{font-size:22px}
+  .hero-cta a{flex:1}
+  .section-head h2{font-size:30px}
+  .topbar-inner{flex-direction:column;gap:4px;font-size:13px}
+  .header-inner{padding:12px 16px}
+  .logo{font-size:20px}
+  .price-row{grid-template-columns:1fr;gap:4px}
+  .price-row b:last-child{font-size:18px}
+  .compare{font-size:13px}
+  .compare th,.compare td{padding:8px 6px}
+  .review-summary{padding:18px}
+  .bar-row{grid-template-columns:70px 1fr 36px}
+  .booking{padding:18px}
+  .trust-grid b{font-size:22px}
+  .footer-grid{grid-template-columns:1fr}
+}
