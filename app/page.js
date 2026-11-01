@@ -215,26 +215,38 @@ export default function FlowFixLanding() {
         </div>
       </section>
 
-      {/* Why Us Section */}
-      <section id="why-us" className="section">
-        <div className="container">
-          <div className="section-title">
+      {/* Why Us Section — redesigned as an editorial split, not cards and not steps */}
+      <section id="why-us" className="section why-section">
+        <div className="container why-editorial">
+          <div className="why-sticky">
+            <span className="why-eyebrow">Why you choose FlowFix</span>
             <h2>Why Karachi Chooses FlowFix</h2>
-            <p>We combine international standards of plumbing craftsmanship with local expertise.</p>
+            <p>Most homeowners are not afraid of a pipe. They are afraid of a plumber who never arrives, a bill that grows after the job, and a leak that comes back next week. This section answers those three fears directly, with no sales talk.</p>
+            <blockquote className="why-quote">“A plumber is judged not by his wrench, but by whether he shows up, tells the price first, and comes back if it leaks again.”</blockquote>
+            <div className="why-stats">
+              <div><strong>30 min</strong><span>Emergency response aim</span></div>
+              <div><strong>Rs 0</strong><span>Surprise-bill promise</span></div>
+              <div><strong>30 days</strong><span>Workmanship warranty</span></div>
+            </div>
+            <a href="tel:+923000000000" className="btn-accent" style={{ marginTop: 24 }}>Call +92 300 0000000</a>
           </div>
-          <div className="features-grid">
-            {[
-              { title: "30-Min Emergency Response", desc: "Strategic neighborhood dispatch units stationed across DHA, Clifton, Gulshan, and Nazimabad." },
-              { title: "Transparent Upfront Pricing", desc: "No surprise bills. We diagnose the issue and give you a fixed quote before touching a wrench." },
-              { title: "Background-Checked Experts", desc: "Every technician is fully verified, professionally trained, and carries official FlowFix identification." },
-              { title: "30-Day Workmanship Warranty", desc: "If the same leak or issue returns within 30 days, we fix it completely free of charge." }
-            ].map((feat, idx) => (
-              <div className="feature-card" key={idx}>
-                <div className="feature-number">0{idx + 1}</div>
-                <h3>{feat.title}</h3>
-                <p>{feat.desc}</p>
-              </div>
-            ))}
+          <div className="why-rows">
+            <div className="why-row">
+              <div className="why-icon"><FiClock /></div>
+              <div><h3>He actually arrives</h3><p>Dispatch comes from DHA, Clifton, Gulshan and Nazimabad hubs, not one van crossing the whole city. That is why the emergency aim is 30 minutes, not an all-day window.</p><span className="why-proof">Proof: area-wise dispatch, not a central queue.</span></div>
+            </div>
+            <div className="why-row">
+              <div className="why-icon"><FiDollarSign /></div>
+              <div><h3>Price first, wrench second</h3><p>We diagnose, give a fixed quote, and only then start work. Parts are shown separately on the invoice, so a small job cannot quietly become a big bill.</p><span className="why-proof">Proof: quote before work, parts listed separately.</span></div>
+            </div>
+            <div className="why-row">
+              <div className="why-icon"><FiShield /></div>
+              <div><h3>A stranger you can let inside</h3><p>Every technician is background-checked, CNIC-verified and trade-tested, and carries official FlowFix identification. You know who is at your door before the door opens.</p><span className="why-proof">Proof: verification before the first home visit.</span></div>
+            </div>
+            <div className="why-row">
+              <div className="why-icon"><FiCheckCircle /></div>
+              <div><h3>If it leaks again, we come back</h3><p>If the same fault returns within 30 days, we fix it free. A warranty that only exists on paper is not a warranty, so this one is written into the job itself.</p><span className="why-proof">Proof: same fault, 30 days, no labour charge.</span></div>
+            </div>
           </div>
         </div>
       </section>
