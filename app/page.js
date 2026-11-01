@@ -3,24 +3,26 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.5, ease: "easeOut" } }),
+  hidden: { opacity: 0, y: 20 },
+  show: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.4, ease: "easeOut" } }),
 };
+
+const TECHNICIANS = ["Ahmed Raza", "Sara Khan", "Bilal Malik"];
 
 const SERVICES = [
   { icon: "💧", title: "Leak Detection & Repair", cat: "Emergency", desc: "Burst pipes, dripping taps and hidden leaks — found with listening and pressure testing, not guesswork.", from: "Rs 1,500+", time: "30–60 min", includes: ["Leak located & isolated", "Pipe / joint repaired", "Pressure test after fix"] },
   { icon: "🌀", title: "Drain Cleaning & Unblocking", cat: "Emergency", desc: "Blocked sinks, toilets, showers and main drains cleared, then checked so the blockage does not return next week.", from: "Rs 2,000+", time: "45–90 min", includes: ["Drain cleared & flushed", "Cause explained on site", "Prevention advice"] },
   { icon: "🔥", title: "Water Heaters & Geysers", cat: "Home", desc: "Gas and electric heater repair, replacement and new installation, sized for your household — not oversold.", from: "Rs 3,500+", time: "1–2 hours", includes: ["Safety & thermostat check", "Old unit removed", "New unit tested twice"] },
+  { icon: "⚡", title: "Water Pump & Motor Repair", cat: "Home", desc: "Boring motors, suction pumps and pressure pumps repaired and installed — a Karachi essential, not an afterthought.", from: "Rs 1,500+", time: "1–2 hours", includes: ["Motor tested with backup generator", "Load-shedding safe testing", "Wiring & pressure check"], badge: "K-Electric Outage Protection: our technicians carry backup generators to test pumps during load shedding." },
   { icon: "🚿", title: "Bathroom & Kitchen Fitting", cat: "Home", desc: "Taps, showers, toilets and sinks fitted neatly, sealed properly and tested for leaks before we leave.", from: "Rs 2,500+", time: "1–3 hours", includes: ["Fitting supplied / fitted", "Sealing & leak test", "Old fitting removed"] },
   { icon: "🧱", title: "Pipe Replacement & Repiping", cat: "Home", desc: "Old, rusted pipework replaced in copper or PPR, with a clear plan for access and patching — no open-ended hourly billing.", from: "On inspection", time: "1–4 days", includes: ["Written scope & price first", "Copper / PPR pipework", "Pressure test & tidy-up"] },
   { icon: "🏢", title: "Commercial Plumbing", cat: "Commercial", desc: "Offices, restaurants and buildings — planned maintenance, emergency cover and one point of contact.", from: "On quote", time: "As scheduled", includes: ["Maintenance contract option", "Priority emergency cover", "Monthly job report"] },
 ];
 
 const AREAS = [
-  { name: "DHA", time: "45 min" }, { name: "Clifton", time: "50 min" },
-  { name: "Gulshan-e-Iqbal", time: "60 min" }, { name: "North Nazimabad", time: "70 min" },
-  { name: "PECHS", time: "55 min" }, { name: "Saddar", time: "65 min" },
-  { name: "Gulistan-e-Johar", time: "75 min" }, { name: "Malir Cantt", time: "90 min" },
+  { name: "DHA", time: "45 min", zone: "South" }, { name: "Clifton", time: "50 min", zone: "South" }, { name: "Saddar", time: "65 min", zone: "South" },
+  { name: "PECHS", time: "55 min", zone: "Central" }, { name: "Gulshan-e-Iqbal", time: "60 min", zone: "Central" }, { name: "North Nazimabad", time: "70 min", zone: "Central" },
+  { name: "Gulistan-e-Johar", time: "75 min", zone: "East" }, { name: "Malir Cantt", time: "90 min", zone: "East" },
 ];
 
 const REVIEWS = [
@@ -41,6 +43,14 @@ const FAQS = [
 ];
 
 const SLOTS = ["Today, 2:00 PM", "Today, 4:30 PM", "Today, 7:00 PM", "Tomorrow, 10:00 AM", "Tomorrow, 1:00 PM"];
+const PRICE_ROWS = [
+  ["Leak repair (tap / visible pipe)", "Repair + pressure test", "30–60 min", "Rs 1,500+", "Rs 2,200+"],
+  ["Drain unblocking", "Clear + flush + cause check", "45–90 min", "Rs 2,000+", "Rs 3,000+"],
+  ["Geyser / water heater repair", "Safety check + repair", "1–2 hours", "Rs 3,500+", "Rs 5,000+"],
+  ["Water pump / motor repair", "Motor test + wiring check", "1–2 hours", "Rs 1,500+", "Rs 2,500+"],
+  ["Toilet repair / replacement", "Fitting + sealing + test", "1–2 hours", "Rs 2,500+", "Rs 3,800+"],
+  ["Full bathroom refit plumbing", "Written scope, staged work", "2–4 days", "On quote", "On quote"],
+];
 
 export default function Home() {
   const [serviceFilter, setServiceFilter] = useState("All");
@@ -49,14 +59,19 @@ export default function Home() {
   const [urgency, setUrgency] = useState("Emergency");
   const [slot, setSlot] = useState(SLOTS[0]);
   const [submitted, setSubmitted] = useState(false);
+  const [bookingId, setBookingId] = useState("");
   const [areaQuery, setAreaQuery] = useState("");
+  const [selectedArea, setSelectedArea] = useState(null);
   const [reviewFilter, setReviewFilter] = useState("All");
+  const [reviewIndex, setReviewIndex] = useState(0);
   const [faqSearch, setFaqSearch] = useState("");
   const [faqCat, setFaqCat] = useState("All");
   const [openFaq, setOpenFaq] = useState(0);
+  const [priceType, setPriceType] = useState("Residential");
 
   const filteredServices = serviceFilter === "All" ? SERVICES : SERVICES.filter((s) => s.cat === serviceFilter);
   const filteredReviews = reviewFilter === "All" ? REVIEWS : REVIEWS.filter((r) => r.service === reviewFilter);
+  const currentReview = filteredReviews[Math.min(reviewIndex, filteredReviews.length - 1)] || filteredReviews[0];
   const filteredFaqs = FAQS.filter((f) =>
     (faqCat === "All" || f.cat === faqCat) &&
     (faqSearch.trim() === "" || (f.q + " " + f.a).toLowerCase().includes(faqSearch.toLowerCase()))
@@ -67,16 +82,34 @@ export default function Home() {
     return AREAS.find((a) => a.name.toLowerCase().includes(q) || q.includes(a.name.toLowerCase()));
   }, [areaQuery]);
 
-  const chooseService = (title) => {
-    setBookService(title);
-    document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
+  const chooseService = (title) => { setBookService(title); document.getElementById("book")?.scrollIntoView({ behavior: "smooth" }); };
+  const submitBooking = (e) => {
+    e.preventDefault();
+    setBookingId(`FF-${Math.floor(1000 + Math.random() * 9000)}`);
+    setSubmitted(true);
+  };
+  const technician = TECHNICIANS[SERVICES.findIndex((s) => s.title === bookService) % TECHNICIANS.length] || TECHNICIANS[0];
+  const downloadCalendar = () => {
+    const now = new Date();
+    const day = slot.startsWith("Tomorrow") ? new Date(now.getTime() + 86400000) : now;
+    const timePart = slot.split(", ")[1] || "2:00 PM";
+    const [hm, mer] = timePart.split(" ");
+    let [h, m] = hm.split(":").map(Number);
+    if (mer === "PM" && h !== 12) h += 12;
+    if (mer === "AM" && h === 12) h = 0;
+    const start = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, m || 0);
+    const end = new Date(start.getTime() + 7200000);
+    const fmt = (d) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nUID:${bookingId}@flowfix.example\nDTSTART:${fmt(start)}\nDTEND:${fmt(end)}\nSUMMARY:FlowFix Plumbing - ${bookService}\nDESCRIPTION:Technician ${technician}. Booking ${bookingId} (demo).\nEND:VEVENT\nEND:VCALENDAR`;
+    const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+    const a = document.createElement("a"); a.href = url; a.download = "flowfix-booking.ics"; a.click(); URL.revokeObjectURL(url);
   };
 
   return (
     <main>
       <div className="topbar"><div className="topbar-inner">
-        <span>📍 Serving Karachi &nbsp;•&nbsp; <b>Licensed &amp; Insured</b> &nbsp;•&nbsp; Licence ref: KHI-PLM-2024-1187 (test)</span>
-        <span>24/7 Emergency: <b>+92 300 0000000 (test number)</b></span>
+        <span>📍 Serving Karachi • <b>Licensed &amp; Insured</b> • Licence ref: KHI-PLM-2024-1187 (test)</span>
+        <span><span className="live-dot" /> 3 technicians currently dispatched in DHA / Clifton • 24/7: <b>+92 300 0000000 (test)</b></span>
       </div></div>
 
       <header className="header"><div className="header-inner">
@@ -88,16 +121,15 @@ export default function Home() {
         <a className="btn btn-orange btn-sm" href="#book">Book a plumber</a>
       </div></header>
 
-      {/* HERO — job: in 5 seconds, prove local, reachable, and which path to take */}
       <section className="hero"><div className="hero-inner">
         <motion.div initial="hidden" animate="show" variants={fadeUp}>
           <span className="eyebrow"><span className="dot" /> Plumbers available now — 24/7 in Karachi</span>
-          <h1>Emergency plumber in Karachi. <em>Same-day fix,</em> upfront price.</h1>
-          <p>Not “quality plumbing solutions”. A licensed plumber who answers, arrives on time, and tells you the price before touching a pipe.</p>
-          <div className="hero-phone">📞 <a href="tel:+923000000000">+92 300 0000000</a><span>Tap to call — test number</span></div>
+          <h1>Reliable Plumbing in Karachi, Fixed on the First Visit.</h1>
+          <p>Transparent pricing, verified technicians, and on-time arrival across DHA, Clifton, and Gulshan. No vague “call for quote”, no all-day waiting window.</p>
+          <div className="hero-phone">📞 <a href="tel:+923000000000">+92 300 0000000</a><span>Tap to call — test number • WhatsApp booking on request</span></div>
           <div className="hero-cta">
             <a className="btn btn-orange" href="tel:+923000000000">🚨 Emergency — call now</a>
-            <a className="btn btn-outline" href="#book">Book a scheduled visit</a>
+            <a className="btn btn-outline" href="#book">Book in 60 seconds</a>
           </div>
           <div className="hero-review">★★★★★ <b>4.9</b> · 2,400+ reviews · <i>“Arrived in 40 minutes at midnight and stopped the water.” — Ahmed R., DHA</i></div>
           <div className="hero-points">
@@ -107,19 +139,23 @@ export default function Home() {
           </div>
         </motion.div>
 
-        {/* BOOKING — job: service → slot → minimal details → confirmation, in that order */}
-        <motion.div id="book" className="booking" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }}>
+        <motion.div id="book" className="booking" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
           <div className="steps-indicator">Step {bookStep} of 3 — {["Choose service", "Pick a time", "Your details"][bookStep - 1]}</div>
-          <h2>Book a plumber</h2>
+          <h2>Book a Plumber in 60 Seconds.</h2>
+          <p>No waiting around. Pick a slot that fits your day.</p>
           {submitted ? (
             <div className="success">
-              <b>Request received (demo).</b><br />
+              <b>Booking confirmed (demo) — {bookingId}</b><br />
               {bookService} · {urgency} · {slot}<br />
+              Technician: {technician} · Estimated arrival: {slot}<br />
               A plumber will call to confirm the price — no payment is taken here. For a live emergency, please call instead of waiting for a form.
-              <br /><button className="btn btn-outline btn-sm" style={{ marginTop: 12 }} onClick={() => { setSubmitted(false); setBookStep(1); }}>Book another visit</button>
+              <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
+                <button className="btn btn-navy btn-sm" onClick={downloadCalendar}>Add to calendar (.ics)</button>
+                <button className="btn btn-outline btn-sm" onClick={() => { setSubmitted(false); setBookStep(1); }}>Book another visit</button>
+              </div>
             </div>
           ) : (
-            <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+            <form onSubmit={submitBooking}>
               {bookStep === 1 && (<>
                 <div className="field"><label>What is the problem?</label>
                   <select value={bookService} onChange={(e) => setBookService(e.target.value)}>{SERVICES.map((s) => <option key={s.title}>{s.title}</option>)}</select>
@@ -130,15 +166,16 @@ export default function Home() {
                 <p className="small">Emergency = water running, flooding or no water. Those jobs go by phone first.</p>
               </>)}
               {bookStep === 2 && (<>
-                <div className="field"><label>Pick a time slot</label><div className="slot-grid">
+                <div className="field"><label>Pick a time slot (2-hour window)</label><div className="slot-grid">
                   {SLOTS.map((s) => <button type="button" key={s} className={slot === s ? "active" : ""} onClick={() => setSlot(s)}>{s}</button>)}
                 </div></div>
                 <p className="small">Slots shown are demo availability. Your visit is confirmed by phone, not by this form alone.</p>
               </>)}
               {bookStep === 3 && (<>
-                <div className="field"><label>Your name</label><input required placeholder="e.g. Ahmed Raza" /></div>
-                <div className="field"><label>Phone</label><input required placeholder="03xx-xxxxxxx" /></div>
-                <div className="field"><label>Area</label><input placeholder="e.g. DHA Phase 5" /></div>
+                <div className="field"><label>Full name (required)</label><input required placeholder="e.g. Ahmed Raza" /></div>
+                <div className="field"><label>Karachi area (required)</label><input required placeholder="e.g. DHA Phase 5" /></div>
+                <div className="field"><label>Mobile number (required)</label><input required placeholder="+92 3xx-xxxxxxx" /></div>
+                <div className="field"><label>Street address</label><input placeholder="House / street (optional, helps dispatch)" /></div>
                 <div className="summary-box"><b>{bookService}</b><br />{urgency} · {slot}</div>
               </>)}
               <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
@@ -158,12 +195,11 @@ export default function Home() {
         <div><b>24/7</b><span>Emergency cover</span></div>
       </motion.div></div>
 
-      {/* SERVICES — job: filter by intent, show what is included, link straight to booking */}
       <section className="section" id="services">
         <div className="section-head">
-          <span className="kicker">Services — grouped by your problem</span>
-          <h2>Find your problem. See what is included.</h2>
-          <p>A service name alone does not help you choose. Each card shows duration, starting price and exactly what the visit covers.</p>
+          <span className="kicker">Services</span>
+          <h2>Expert Solutions for Every Pipe &amp; Pump.</h2>
+          <p>From emergency leaks to routine motor maintenance. Each card shows duration, starting price and exactly what the visit covers.</p>
         </div>
         <div className="tabs">{["All", "Emergency", "Home", "Commercial"].map((t) => (
           <button key={t} className={serviceFilter === t ? "active" : ""} onClick={() => setServiceFilter(t)}>{t}</button>
@@ -175,6 +211,7 @@ export default function Home() {
                 <div className="icon">{s.icon}</div>
                 <span className="tag">{s.cat}</span>
                 <h3>{s.title}</h3><p>{s.desc}</p>
+                {s.badge && <div className="badge-box">{s.badge}</div>}
                 <ul className="includes">{s.includes.map((x) => <li key={x}>✓ {x}</li>)}</ul>
                 <div><span className="from">From {s.from}</span> · {s.time}</div>
                 <button className="btn btn-navy btn-sm" style={{ marginTop: 14 }} onClick={() => chooseService(s.title)}>Book this service →</button>
@@ -184,21 +221,18 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* WHY — job: make the promise checkable, and show who actually arrives */}
       <section className="dark"><div className="section why" id="why">
         <div>
-          <span className="kicker">Why FlowFix</span>
-          <h2 style={{ fontSize: 38, lineHeight: 1.15 }}>The plumber who actually shows up on time.</h2>
-          <p style={{ color: "#cdd9ec" }}>Compare the promise with what most homeowners actually get — then judge us on the left column.</p>
-          <table className="compare">
-            <tbody>
-              <tr><th></th><th>FlowFix</th><th>Typical plumber</th></tr>
-              <tr><td>Price before work</td><td>✓ In writing</td><td>✗ “We will see”</td></tr>
-              <tr><td>Arrival window</td><td>✓ 60–90 min, called ahead</td><td>✗ All-day window</td></tr>
-              <tr><td>Clean-up</td><td>✓ Included, every job</td><td>✗ Often left to you</td></tr>
-              <tr><td>Guarantee</td><td>✓ 12 months</td><td>✗ Verbal only</td></tr>
-            </tbody>
-          </table>
+          <span className="kicker">Why us</span>
+          <h2 style={{ fontSize: 36, lineHeight: 1.15 }}>Why Karachi Trusts FlowFix.</h2>
+          <p style={{ color: "#cdd9ec" }}>We raise the standard of home services. Compare the promise with what most homeowners actually get.</p>
+          <table className="compare"><tbody>
+            <tr><th></th><th>FlowFix</th><th>Typical plumber</th></tr>
+            <tr><td>Price before work</td><td>✓ In writing</td><td>✗ “We will see”</td></tr>
+            <tr><td>Arrival window</td><td>✓ 60–90 min, called ahead</td><td>✗ All-day window</td></tr>
+            <tr><td>Clean-up</td><td>✓ Included, every job</td><td>✗ Often left to you</td></tr>
+            <tr><td>Guarantee</td><td>✓ 12 months</td><td>✗ Verbal only</td></tr>
+          </tbody></table>
           <h3 style={{ marginTop: 28 }}>Meet the team (fictional, for this demo)</h3>
           <div className="team">
             {[["AR", "Ahmed Raza", "Lead plumber · 12 yrs"], ["SK", "Sara Khan", "Drain & sewer specialist · 8 yrs"], ["MB", "Bilal Malik", "Heater & fitting · 9 yrs"]].map(([ini, name, role]) => (
@@ -213,9 +247,8 @@ export default function Home() {
         </motion.div>
       </div></section>
 
-      {/* HOW IT WORKS — job: remove the “what happens next?” anxiety */}
       <section className="section">
-        <div className="section-head"><span className="kicker">How it works</span><h2>Three steps, and you always know what happens next.</h2></div>
+        <div className="section-head"><span className="kicker">How it works</span><h2>Hassle-Free Repairs in 3 Steps.</h2><p>Simple, transparent, and clean.</p></div>
         <div className="steps">
           {[["1", "Tell us the problem", "2 minutes by phone or form. Send a photo if you can.", "Confirmation in 15 min"], ["2", "Get a confirmed price", "We inspect, explain in plain words, agree the price in writing.", "No work before you agree"], ["3", "Fixed & guaranteed", "Work tested twice, area left clean, guarantee in writing.", "12-month cover"]].map(([n, t, d, note]) => (
             <div className="card" key={n}><div className="step-num">{n}</div><h3>{t}</h3><p style={{ color: "var(--muted)" }}>{d}</p><b>{note}</b></div>
@@ -232,39 +265,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PRICING — job: price-book style, what is included and what is not */}
       <section className="section" id="pricing" style={{ paddingTop: 0 }}>
-        <div className="section-head"><span className="kicker">Pricing — flat-rate price book</span><h2>Know what it costs, and what it does not cover.</h2>
-        <p>Flat rates agreed before work, not an hourly meter running while you worry. Final price is confirmed after inspection.</p></div>
+        <div className="section-head"><span className="kicker">Pricing</span><h2>Upfront Pricing. No Hidden Surprises.</h2>
+        <p>Pay only after the job is done to your satisfaction. Toggle to see commercial rates — the difference is stated, not hidden.</p></div>
+        <div className="tabs">{["Residential", "Commercial"].map((t) => (
+          <button key={t} className={priceType === t ? "active" : ""} onClick={() => setPriceType(t)}>{t}</button>
+        ))}</div>
         <div className="price-table">
-          {[["Leak repair (tap / visible pipe)", "Repair + pressure test", "30–60 min", "Rs 1,500+"], ["Drain unblocking", "Clear + flush + cause check", "45–90 min", "Rs 2,000+"], ["Geyser / water heater repair", "Safety check + repair", "1–2 hours", "Rs 3,500+"], ["Toilet repair / replacement", "Fitting + sealing + test", "1–2 hours", "Rs 2,500+"], ["Full bathroom refit plumbing", "Written scope, staged work", "2–4 days", "On quote"]].map(([job, inc, time, price]) => (
-            <div className="price-row" key={job}><b>{job}</b><span style={{ color: "var(--muted)" }}>{inc}</span><span style={{ color: "var(--muted)" }}>{time}</span><b>{price}</b></div>
+          {PRICE_ROWS.map(([job, inc, time, res, com]) => (
+            <div className="price-row" key={job}><b>{job}</b><span style={{ color: "var(--muted)" }}>{inc}</span><span style={{ color: "var(--muted)" }}>{time}</span><b>{priceType === "Residential" ? res : com}</b></div>
           ))}
         </div>
         <div className="price-notes">
-          <div><b>Not included, quoted separately:</b> parts beyond standard allowance, opening a wall, after-hours emergency surcharge (Rs 1,000, stated before dispatch).</div>
-          <div className="plan-card"><b>FlowFix Care Plan — Rs 9,999 / year</b><br />Annual inspection, priority booking, 10% off repairs, no emergency surcharge. For homes that want small problems found before they flood.</div>
+          <div><b>Not included, quoted separately:</b> parts beyond standard allowance, opening a wall, after-hours emergency surcharge (Rs 1,000, stated before dispatch). Parts on larger jobs are charged at actual wholesale rates, shown on the invoice.</div>
+          <div className="plan-card"><b>FlowFix Care Plan — Rs 9,999 / year</b><br />Annual inspection, priority booking, 10% off repairs, no emergency surcharge. <span style={{ background: "var(--orange)", padding: "2px 8px", borderRadius: 999, fontSize: 12, fontWeight: 900 }}>POPULAR</span></div>
         </div>
       </section>
 
-      {/* AREAS — job: prove coverage by response time, let the visitor check their own area */}
       <section className="section" id="areas" style={{ paddingTop: 0 }}>
-        <div className="section-head"><span className="kicker">Service areas</span><h2>Check your area — and how fast we can reach you.</h2>
-        <p>We do not claim the whole city at the same speed. Each area below has an honest emergency response estimate.</p></div>
+        <div className="section-head"><span className="kicker">Service areas</span><h2>Covering All Major Karachi Neighborhoods.</h2><p>Rapid dispatch from local hubs. Click a neighborhood to see its response time.</p></div>
         <div className="field" style={{ maxWidth: 420 }}><label>Check your area</label>
-          <input value={areaQuery} onChange={(e) => setAreaQuery(e.target.value)} placeholder="Type your area, e.g. DHA" />
+          <input value={areaQuery} onChange={(e) => { setAreaQuery(e.target.value); setSelectedArea(null); }} placeholder="Type your area, e.g. DHA" />
           {areaQuery.trim() && (areaMatch
             ? <p className="success" style={{ marginTop: 10 }}>✓ {areaMatch.name} is covered — emergency response about {areaMatch.time}.</p>
             : <p className="small" style={{ marginTop: 10 }}>Not in the list below? Call us — we will tell you honestly if we can reach you, rather than promising and arriving late.</p>)}
+          {selectedArea && <p className="success" style={{ marginTop: 10 }}>✓ {selectedArea.name} ({selectedArea.zone} zone) — emergency response about {selectedArea.time}.</p>}
         </div>
-        <div className="areas">
-          {AREAS.map((a) => <span className="chip" key={a.name}>📍 {a.name} <b>· {a.time}</b></span>)}
-        </div>
+        {["South", "Central", "East"].map((zone) => (
+          <div key={zone} style={{ marginBottom: 16 }}>
+            <b>{zone} Karachi</b>
+            <div className="areas" style={{ marginTop: 8 }}>
+              {AREAS.filter((a) => a.zone === zone).map((a) => (
+                <button key={a.name} className={`chip ${selectedArea?.name === a.name ? "active" : ""}`} onClick={() => setSelectedArea(a)}>📍 {a.name} <b>· {a.time}</b></button>
+              ))}
+            </div>
+          </div>
+        ))}
       </section>
 
-      {/* REVIEWS — job: summary + breakdown + filter + verified, not just three quotes */}
       <section className="section" id="reviews" style={{ paddingTop: 0 }}>
-        <div className="section-head"><span className="kicker">Reviews</span><h2>Not just a star count — the breakdown behind it.</h2></div>
+        <div className="section-head"><span className="kicker">Reviews</span><h2>What Your Neighbors Say.</h2><p>Real reviews from real Karachi homes — with the breakdown behind the star count.</p></div>
         <div className="review-summary">
           <div><b style={{ fontSize: 44 }}>4.9</b><div className="stars">★★★★★</div><span>2,400+ selected reviews (demo data)</span></div>
           <div className="bars">
@@ -274,36 +314,36 @@ export default function Home() {
           </div>
         </div>
         <div className="tabs">{["All", "Leak", "Drain", "Heater"].map((t) => (
-          <button key={t} className={reviewFilter === t ? "active" : ""} onClick={() => setReviewFilter(t)}>{t}</button>
+          <button key={t} className={reviewFilter === t ? "active" : ""} onClick={() => { setReviewFilter(t); setReviewIndex(0); }}>{t}</button>
         ))}</div>
-        <div className="review-grid">
-          {filteredReviews.map((r, i) => (
-            <motion.div key={r.name} className="card" custom={i} initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp}>
-              <div className="stars">{"★".repeat(r.stars)}{"☆".repeat(5 - r.stars)}</div>
-              <p style={{ marginTop: 10 }}>“{r.text}”</p>
-              <b>{r.name}</b> · <span className="small">{r.date} · Verified job · {r.service}</span>
-              {r.reply && <div className="owner-reply"><b>Reply from FlowFix:</b> {r.reply}</div>}
-            </motion.div>
-          ))}
+        <div className="card carousel-card">
+          <div className="stars">{"★".repeat(currentReview.stars)}{"☆".repeat(5 - currentReview.stars)}</div>
+          <p style={{ marginTop: 10, fontSize: 18 }}>“{currentReview.text}”</p>
+          <b>{currentReview.name}</b> · <span className="small">{currentReview.date} · Verified job · {currentReview.service}</span>
+          {currentReview.reply && <div className="owner-reply"><b>Reply from FlowFix:</b> {currentReview.reply}</div>}
+          <div className="carousel-controls">
+            <button onClick={() => setReviewIndex((reviewIndex - 1 + filteredReviews.length) % filteredReviews.length)}>← Previous</button>
+            <span>{Math.min(reviewIndex, filteredReviews.length - 1) + 1} / {filteredReviews.length}</span>
+            <button onClick={() => setReviewIndex((reviewIndex + 1) % filteredReviews.length)}>Next →</button>
+          </div>
         </div>
       </section>
 
-      {/* FAQ — job: searchable, categorised, animated — find the answer in seconds */}
       <section className="section faq" id="faq" style={{ paddingTop: 0 }}>
-        <div className="section-head"><span className="kicker">FAQ</span><h2>Find your answer, without scrolling through everything.</h2></div>
+        <div className="section-head"><span className="kicker">FAQ</span><h2>Got Questions? We Have Answers.</h2><p>Everything you need to know about our service.</p></div>
         <div className="field"><input value={faqSearch} onChange={(e) => setFaqSearch(e.target.value)} placeholder="Search FAQs, e.g. price, emergency, guarantee…" /></div>
         <div className="tabs">{["All", "Emergency", "Pricing", "Booking", "Guarantee"].map((t) => (
           <button key={t} className={faqCat === t ? "active" : ""} onClick={() => setFaqCat(t)}>{t}</button>
         ))}</div>
         {filteredFaqs.length === 0 && <p className="small">No FAQ matches that search — try “price”, “emergency” or “guarantee”, or call us.</p>}
-        {filteredFaqs.map((f, i) => {
+        {filteredFaqs.map((f) => {
           const idx = FAQS.indexOf(f);
           return (
             <div className="faq-item" key={f.q}>
               <button className="faq-q" onClick={() => setOpenFaq(openFaq === idx ? -1 : idx)}><span>{f.q}</span><motion.span animate={{ rotate: openFaq === idx ? 45 : 0 }}>{openFaq === idx ? "×" : "+"}</motion.span></button>
               <AnimatePresence initial={false}>
                 {openFaq === idx && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} style={{ overflow: "hidden" }}>
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4 }} style={{ overflow: "hidden" }}>
                     <div className="faq-a">{f.a}</div>
                   </motion.div>
                 )}
@@ -313,20 +353,20 @@ export default function Home() {
         })}
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}><div className="cta">
-        <h2>Water leaking right now? Do not wait.</h2>
-        <p>Turn off the main valve if you can, then call us. We will talk you through the first step while a plumber is on the way.</p>
+      <section className="section" style={{ paddingTop: 0 }}><div className="cta cta-amber">
+        <h2>Got a Plumbing Emergency?</h2>
+        <p>Our emergency team is on standby 24/7. Turn off the main valve if you can, then call us.</p>
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginTop: 22 }}>
-          <a className="btn btn-orange" href="tel:+923000000000">Call +92 300 0000000</a>
+          <a className="btn btn-navy" href="tel:+923000000000">Call +92 300 0000000</a>
           <a className="btn btn-outline" href="#book">Book online</a>
         </div>
       </div></section>
 
       <footer className="footer"><div className="footer-inner">
         <div><b>FlowFix Plumbing</b><br />A fictional test business, built to demonstrate a professional plumber landing page.<br />Email: hello@flowfix.example • Phone: +92 300 0000000 (test number)<br />Licence ref: KHI-PLM-2024-1187 (test)</div>
-        <div><b>Services</b><br />Leak repair • Drain cleaning • Water heaters<br />Fitting • Repiping • Commercial</div>
+        <div><b>Services</b><br />Leak repair • Drain cleaning • Water heaters<br />Pump &amp; motor • Fitting • Repiping • Commercial</div>
         <div><b>Hours</b><br />Emergency: 24/7<br />Scheduled: Mon–Sat, 8am–8pm</div>
-        <div><b>Built with</b><br />Next.js • Framer Motion • Deployed on Vercel</div>
+        <div><b>Built with</b><br />Next.js • Framer Motion • Design by Gemini (AI Studio) • Deployed on Vercel</div>
       </div></footer>
 
       <div className="sticky-bar">
