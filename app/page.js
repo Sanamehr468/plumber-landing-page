@@ -1,500 +1,235 @@
-// app/page.js
 "use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiPhone, FiMail, FiMapPin, FiClock, FiShield, FiTool, 
-  FiCheckCircle, FiStar, FiChevronDown, FiMenu, FiX, 
-  FiDroplet, FiAlertTriangle, FiHome, FiSettings, FiDollarSign
-} from 'react-icons/fi';
+import { useState } from "react";
+import { motion } from "framer-motion";
 
-export default function FlowFixLanding() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeFaq, setActiveFaq] = useState(null);
-  const [bookingStatus, setBookingStatus] = useState('');
-  
-  // Booking Form State
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    service: 'Emergency Leak Repair',
-    area: 'Clifton',
-    notes: ''
-  });
+const PHONE = "+92 300 0000000";
+const PHONE_LINK = "tel:+923000000000";
+const EMAIL = "hello@flowfix.example";
+const TECHNICIANS = ["Ahmed Raza", "Sara Khan", "Bilal Malik"];
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+const SERVICES = [
+  { id: "leak", name: "Emergency leak repair", cat: "Emergency", time: "60 to 90 minutes", price: 2500, includes: ["Water shut-off first", "Leak repair and test", "Clean-up after the job"], problem: "A pipe is leaking and water is spreading. We stop it first, then fix it." },
+  { id: "drain", name: "Drain unblocking", cat: "Home", time: "45 minutes", price: 1500, includes: ["Drain inspection", "Unblocking and flush", "Advice on what caused it"], problem: "A sink, shower or floor drain is slow or blocked." },
+  { id: "tap", name: "Tap and fixture fitting", cat: "Home", time: "60 minutes", price: 1200, includes: ["Old fixture removal", "New fitting and seals", "Leak test"], problem: "A tap drips, a shower is weak, or a fixture needs replacing." },
+  { id: "pump", name: "Water pump and motor repair", cat: "Home", time: "90 minutes", price: 3000, includes: ["Pump and motor check", "Repair or replacement advice", "Test under load"], problem: "The pump will not start, or the tank is not filling. During load shedding, our technicians carry a backup generator to test the pump." },
+  { id: "bathroom", name: "Bathroom and kitchen work", cat: "Home", time: "2 to 4 hours", price: 5000, includes: ["Full fitting check", "Pipes, traps and seals", "Written quote before work"], problem: "A bathroom or kitchen needs new pipes, a WC, or a full refit check." },
+  { id: "commercial", name: "Commercial plumbing", cat: "Commercial", time: "By appointment", price: 0, includes: ["Site visit and survey", "Maintenance schedule", "Priority response"], problem: "An office, shop or building needs a reliable plumbing contract." },
+];
 
-  const handleBookingSubmit = (e) => {
+const AREAS = [
+  { zone: "South", areas: [{ name: "DHA", time: "45 minutes" }, { name: "Clifton", time: "45 minutes" }, { name: "Saddar", time: "60 minutes" }] },
+  { zone: "Central", areas: [{ name: "Gulshan-e-Iqbal", time: "60 minutes" }, { name: "North Nazimabad", time: "60 minutes" }, { name: "PECHS", time: "60 minutes" }] },
+  { zone: "East", areas: [{ name: "Malir Cantt", time: "90 minutes" }, { name: "Gulistan-e-Jauhar", time: "75 minutes" }, { name: "Korangi", time: "75 minutes" }] },
+  { zone: "West", areas: [{ name: "Orangi Town", time: "90 minutes" }, { name: "SITE", time: "75 minutes" }] },
+  { zone: "North", areas: [{ name: "North Karachi", time: "75 minutes" }, { name: "Surjani Town", time: "90 minutes" }] },
+];
+const AREA_TIMES = Object.fromEntries(AREAS.flatMap((z) => z.areas.map((a) => [a.name, a.time])));
+
+const REVIEWS = [
+  { name: "Farhan Siddiqui", role: "DHA, leak repair, verified job", quote: "The plumber arrived in 40 minutes, showed the price before touching a pipe, and the leak has not come back. That is the whole review.", reply: "FlowFix reply: Thank you, Farhan. The same fault is covered for 30 days." },
+  { name: "Dr. Ayesha Malik", role: "Gulshan, pump repair, verified job", quote: "Our pump failed during load shedding. They tested it with their own generator and told us the motor, not the wiring, was the problem.", reply: "FlowFix reply: Thank you, Dr. Malik. Pump testing during an outage is part of the visit." },
+  { name: "Zainab Tariq", role: "Clifton, drain unblocking, verified job", quote: "No surprise bill. The price on the phone was the price on the job card, parts listed separately.", reply: "FlowFix reply: Thank you, Zainab. Parts are always listed separately." },
+];
+
+const FAQS = [
+  { q: "How much will the visit cost?", a: "A home visit starts from Rs 1,500 for labour. Parts are listed separately, and you get the full quote before work starts. If the quote changes, work stops until you agree.", cat: "Pricing" },
+  { q: "How fast can you reach me?", a: "Emergency visits in DHA and Clifton are usually 45 minutes. Other areas are 60 to 90 minutes, depending on traffic. The area list on this page shows the honest time for each area.", cat: "Areas" },
+  { q: "What if the leak comes back?", a: "The same fault is covered for 30 days with no labour charge. Call the number on your booking and we will send the same technician where possible.", cat: "Guarantee" },
+  { q: "Do you work during load shedding?", a: "Yes. For pump and motor work, technicians carry a backup generator so the pump can be tested even when the power is out.", cat: "Booking" },
+  { q: "Do I need to be home for the whole visit?", a: "You need to be home at the start, to show the problem and agree the quote. After that, the technician can finish most jobs and show you the result at the end.", cat: "Booking" },
+  { q: "Is this a real business?", a: "No. FlowFix is a fictional test business for this page. The phone number and email on this page are test details, not a real booking line.", cat: "General" },
+];
+
+const PLANS = [
+  { name: "Single visit", price: "From Rs 1,500", rows: ["Callout: included", "Labour: one job", "Parts: listed separately", "Guarantee: 30 days", "After-hours: Rs 1,000 surcharge, told before dispatch", "Response: 45 to 90 minutes"] },
+  { name: "Care Plan", price: "Rs 9,999 a year", recommended: true, rows: ["Callout: included", "Labour: two visits a year", "Parts: listed separately", "Guarantee: 30 days", "After-hours: no surcharge", "Response: priority"] },
+  { name: "Commercial", price: "Custom quote", rows: ["Callout: site visit", "Labour: contract rate", "Parts: listed separately", "Guarantee: 30 days", "After-hours: agreed in contract", "Response: agreed in contract"] },
+];
+
+function Fade({ children, delay = 0 }) {
+  return <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay }}>{children}</motion.div>;
+}
+
+export default function Home() {
+  const [filter, setFilter] = useState("All");
+  const [service, setService] = useState("leak");
+  const [area, setArea] = useState("DHA");
+  const [slot, setSlot] = useState("Today, 4 to 6 pm");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [booking, setBooking] = useState(null);
+  const [howOpen, setHowOpen] = useState(0);
+  const [areaOpen, setAreaOpen] = useState(0);
+  const [review, setReview] = useState(0);
+  const [faqSearch, setFaqSearch] = useState("");
+  const [faqCat, setFaqCat] = useState("All");
+
+  const selectedService = SERVICES.find((s) => s.id === service) || SERVICES[0];
+  const visibleServices = SERVICES.filter((s) => filter === "All" || s.cat === filter);
+  const visibleFaqs = FAQS.filter((f) => (faqCat === "All" || f.cat === faqCat) && (f.q + f.a).toLowerCase().includes(faqSearch.toLowerCase()));
+
+  function submitBooking(e) {
     e.preventDefault();
-    if (!formData.name || !formData.phone) {
-      setBookingStatus('Please fill in all required fields.');
-      return;
-    }
-    setBookingStatus('Booking confirmed! Our plumber is dispatching to your location.');
-    setFormData({ name: '', phone: '', service: 'Emergency Leak Repair', area: 'Clifton', notes: '' });
-  };
+    const id = "FF-" + Math.floor(1000 + Math.random() * 9000);
+    setBooking({ id, tech: TECHNICIANS[Math.floor(Math.random() * TECHNICIANS.length)], service: selectedService.name, area, slot });
+  }
 
-  const toggleFaq = (index) => {
-    setActiveFaq(activeFaq === index ? null : index);
-  };
+  function calendarFile() {
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "BEGIN:VEVENT", "SUMMARY:FlowFix plumber visit", `DESCRIPTION:${selectedService.name} in ${area}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+    const a = document.createElement("a"); a.href = url; a.download = "flowfix-booking.ics"; a.click(); URL.revokeObjectURL(url);
+  }
+
+  const howStages = [
+    { name: "Tell us the problem", text: "Choose a service, an area and a time slot. Tell us where the water is, and what changed." },
+    { name: "Get a flat quote", text: "You get the starting price and what is included before anyone is dispatched. Parts are listed separately." },
+    { name: "Technician arrives", text: "The assigned technician arrives in the area window, shows the job card, and confirms the quote on site." },
+    { name: "Fixed and guaranteed", text: "The job is tested before we leave. The same fault is covered for 30 days with no labour charge." },
+  ];
 
   return (
-    <div className="flowfix-app">
-      {/* Top Bar */}
-      <div className="topbar">
-        <div className="container topbar-inner">
-          <div className="topbar-info">
-            <a href="tel:+923000000000"><FiPhone /> +92 300 0000000</a>
-            <a href="mailto:hello@flowfix.example"><FiMail /> hello@flowfix.example</a>
-            <span><FiClock /> 24/7 Emergency Service across Karachi</span>
-          </div>
-          <div className="topbar-badge">
-            <span>⚡ Average 30-Min Response Time</span>
-          </div>
+    <main id="top">
+      <div className="board heroBoard">
+        <div className="tile nameTile"><h1>FlowFix</h1></div>
+        <a className="tile linkTile" href="#services">Services</a>
+        <a className="tile linkTile" href="#pricing">Pricing</a>
+        <a className="tile linkTile" href="#areas">Areas</a>
+        <a className="tile linkTile" href="#reviews">Reviews</a>
+        <div className="heroLeft">
+          <div className="tile photoTile portrait"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Plumber_uses_two_wrenches_to_tighten_a_fitting.jpg" width="1096" height="894" alt="A plumber tightening a fitting with two wrenches" /></div>
+          <div className="tile factsTile"><p><strong>Karachi plumber.</strong> Emergency and scheduled visits.</p><p><strong>Test number.</strong> {PHONE}</p><p><strong>Flat prices.</strong> Quote before work.</p><p><strong>30 days.</strong> Same fault, no labour charge.</p><p><strong>Test site.</strong> Not a real business.</p></div>
+        </div>
+        <div className="heroCentre">
+          <div className="tile photoTile large"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Karachi_street_scene.jpg/1920px-Karachi_street_scene.jpg" width="1920" height="1282" alt="A street scene in Karachi" /></div>
+          <div className="tile statementTile"><p>Karachi plumbing, fixed on the first visit. Book a service, see the price, and know who is coming.</p></div>
+        </div>
+        <div className="heroRight">
+          <div className="tile railTile">45 minutes in DHA and Clifton</div>
+          <div className="tile railTile">4.9 from verified jobs</div>
+          <div className="tile railTile">Parts listed separately</div>
+          <div className="tile railTile">Pump testing during load shedding</div>
+          <a className="tile railTile actionTile" href="#book">Book a plumber</a>
         </div>
       </div>
 
-      {/* Navigation */}
-      <header className="navbar">
-        <div className="container navbar-inner">
-          <div className="logo">
-            <FiDroplet className="logo-icon" />
-            <span>FlowFix<span className="accent">Plumbing</span></span>
-          </div>
-
-          <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
-            <a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a>
-            <a href="#why-us" onClick={() => setMobileMenuOpen(false)}>Why Us</a>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>Process</a>
-            <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
-            <a href="#areas" onClick={() => setMobileMenuOpen(false)}>Areas</a>
-            <a href="#reviews" onClick={() => setMobileMenuOpen(false)}>Reviews</a>
-            <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-            <a href="tel:+923000000000" className="nav-phone-btn">
-              <FiPhone /> Call Now
-            </a>
-          </nav>
-
-          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <FiX /> : <FiMenu />}
-          </button>
-        </div>
-      </header>
-
-      {/* Hero Section with Booking Form */}
-      <section className="hero">
-        <div className="container hero-grid">
-          <motion.div 
-            className="hero-content"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="badge-pill">
-              <FiShield /> Karachi’s Most Trusted Licensed Plumbers
-            </div>
-            <h1>Fast, Reliable Plumbing Solutions in Karachi</h1>
-            <p>
-              From midnight burst pipes in DHA to stubborn clogs in Gulshan, our expert technicians arrive within 30 minutes. Transparent pricing, guaranteed workmanship.
-            </p>
-            <div className="hero-highlights">
-              <div><FiCheckCircle /> No Hidden Fees</div>
-              <div><FiCheckCircle /> Licensed & Verified</div>
-              <div><FiCheckCircle /> 100% Satisfaction Guarantee</div>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="booking-card"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <div className="booking-header">
-              <h3>Book a Plumber Instantly</h3>
-              <p>Fill out the form and we'll dispatch immediately.</p>
-            </div>
-            <form onSubmit={handleBookingSubmit} className="booking-form">
-              <div className="form-group">
-                <label>Your Name *</label>
-                <input 
-                  type="text" 
-                  name="name" 
-                  placeholder="e.g. Ali Khan" 
-                  value={formData.name} 
-                  onChange={handleInputChange} 
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Phone Number *</label>
-                <input 
-                  type="tel" 
-                  name="phone" 
-                  placeholder="03XX XXXXXXX" 
-                  value={formData.phone} 
-                  onChange={handleInputChange} 
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Service Needed</label>
-                  <select name="service" value={formData.service} onChange={handleInputChange}>
-                    <option value="Emergency Leak Repair">Emergency Leak Repair</option>
-                    <option value="Drain Unclogging">Drain Unclogging</option>
-                    <option value="Water Pump Installation">Water Pump Installation</option>
-                    <option value="Geyser Repair / Fitting">Geyser Repair / Fitting</option>
-                    <option value="General Maintenance">General Maintenance</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Karachi Area</label>
-                  <select name="area" value={formData.area} onChange={handleInputChange}>
-                    <option value="Clifton">Clifton</option>
-                    <option value="Defence (DHA)">Defence (DHA)</option>
-                    <option value="Gulshan-e-Iqbal">Gulshan-e-Iqbal</option>
-                    <option value="PECHS">PECHS</option>
-                    <option value="North Nazimabad">North Nazimabad</option>
-                    <option value="Bahria Town">Bahria Town</option>
-                    <option value="Other Area">Other Area</option>
-                  </select>
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Additional Notes (Optional)</label>
-                <textarea 
-                  name="notes" 
-                  rows="2" 
-                  placeholder="Describe your plumbing issue..." 
-                  value={formData.notes} 
-                  onChange={handleInputChange}
-                ></textarea>
-              </div>
-              <button type="submit" className="btn-primary full-width">
-                Dispatch Plumber Now
-              </button>
-              {bookingStatus && <p className="booking-status">{bookingStatus}</p>}
-            </form>
-          </motion.div>
+      <section className="board intro" aria-label="About FlowFix">
+        <Fade><p className="lead">FlowFix is a Karachi plumber built around one promise: the price is said before the wrench comes out, the technician actually arrives, and if the same fault comes back within 30 days, we come back too.</p></Fade>
+        <div className="introCols">
+          <p><strong>Who.</strong> A small team of plumbers for homes and small businesses across Karachi, with emergency cover for leaks and burst pipes.</p>
+          <p><strong>What.</strong> Leaks, drains, taps, pumps, bathrooms and commercial maintenance, with a flat starting price for each job.</p>
+          <p><strong>Where.</strong> DHA, Clifton, Gulshan, North Nazimabad, Malir Cantt and the areas listed below, with honest response times for each.</p>
+          <p><strong>How to reach us.</strong> Use the booking board below, or call the test number. This is a test page, so no real booking is made.</p>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="section bg-light">
-        <div className="container">
-          <div className="section-title">
-            <h2>Our Professional Services</h2>
-            <p>Comprehensive residential and commercial plumbing solutions delivered across Karachi.</p>
-          </div>
-          <div className="services-grid">
-            {[
-              { icon: <FiAlertTriangle />, title: "Emergency Leak Repair", desc: "Rapid response for burst pipes, flooding, and sudden major leaks day or night." },
-              { icon: <FiTool />, title: "Drain & Sewer Unclogging", desc: "Advanced hydro-jetting and mechanical clearing for stubborn bathroom and kitchen blockages." },
-              { icon: <FiSettings />, title: "Water Pump Installation", desc: "Expert motor fitting, automatic float switch setup, and suction troubleshooting." },
-              { icon: <FiHome />, title: "Geyser & Water Heater", desc: "Gas and electric geyser installation, thermostat replacement, and tank servicing." },
-              { icon: <FiDroplet />, title: "Bathroom & Kitchen Fixtures", desc: "Faceted tap replacements, sink installation, flush tank repairs, and shower setups." },
-              { icon: <FiShield />, title: "Complete Piping & Re-piping", desc: "UPVC, PPRC, and galvanized pipe installation and leakage proofing for entire homes." }
-            ].map((srv, idx) => (
-              <motion.div 
-                className="service-card" 
-                key={idx}
-                whileHover={{ y: -5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="service-icon">{srv.icon}</div>
-                <h3>{srv.title}</h3>
-                <p>{srv.desc}</p>
-                <a href="#booking" className="service-link">Book Service &rarr;</a>
-              </motion.div>
-            ))}
-          </div>
+      <section className="board" id="book" aria-label="Book a plumber">
+        <Fade><div className="tile sectionHeadTile"><h2>Book a plumber</h2><p>Service, then area and time, then a few details. The confirmation shows your booking reference, technician and arrival window.</p></div></Fade>
+        <div className="tile bookTile">
+          <div className="checker"><p><strong>Area check.</strong> {area}: {AREA_TIMES[area] || "Ask for a time"}.</p><p><strong>Starting price.</strong> {selectedService.name}: {selectedService.price ? `Rs ${selectedService.price.toLocaleString()}+` : "Custom quote"}.</p></div>
+          <form onSubmit={submitBooking}>
+            <label>Service<select value={service} onChange={(e) => setService(e.target.value)}>{SERVICES.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
+            <label>Area<select value={area} onChange={(e) => setArea(e.target.value)}>{Object.keys(AREA_TIMES).map((a) => <option key={a}>{a}</option>)}</select></label>
+            <fieldset><legend>Time slot</legend>{["Today, 4 to 6 pm", "Tomorrow, 9 to 11 am", "Tomorrow, 4 to 6 pm", "Emergency, as soon as possible"].map((s) => <button type="button" key={s} className={slot === s ? "slot active" : "slot"} onClick={() => setSlot(s)}>{s}</button>)}</fieldset>
+            <label>Name<input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your name" /></label>
+            <label>Phone<input value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="03xx xxxxxxx" /></label>
+            <label>Address<input value={address} onChange={(e) => setAddress(e.target.value)} required placeholder="House, street, area" /></label>
+            <button className="btn" type="submit">Confirm booking</button>
+          </form>
+          {booking && <div className="confirm"><p><strong>Booking {booking.id}.</strong> {booking.service} in {booking.area}.</p><p>Technician: {booking.tech}. Slot: {booking.slot}.</p><button className="btn secondary" type="button" onClick={calendarFile}>Add to calendar</button><p className="small">Test booking only. No technician is dispatched from this page.</p></div>}
         </div>
       </section>
 
-      {/* Why Us Section — redesigned as an editorial split, not cards and not steps */}
-      <section id="why-us" className="section why-section">
-        <div className="container why-editorial">
-          <div className="why-sticky">
-            <span className="why-eyebrow">Why you choose FlowFix</span>
-            <h2>Why Karachi Chooses FlowFix</h2>
-            <p>Most homeowners are not afraid of a pipe. They are afraid of a plumber who never arrives, a bill that grows after the job, and a leak that comes back next week. This section answers those three fears directly, with no sales talk.</p>
-            <blockquote className="why-quote">“A plumber is judged not by his wrench, but by whether he shows up, tells the price first, and comes back if it leaks again.”</blockquote>
-            <div className="why-stats">
-              <div><strong>30 min</strong><span>Emergency response aim</span></div>
-              <div><strong>Rs 0</strong><span>Surprise-bill promise</span></div>
-              <div><strong>30 days</strong><span>Workmanship warranty</span></div>
-            </div>
-            <a href="tel:+923000000000" className="btn-accent" style={{ marginTop: 24 }}>Call +92 300 0000000</a>
+      <section className="board" id="services" aria-label="Services">
+        <Fade><div className="tile sectionHeadTile"><h2>Services by problem</h2><p>Pick a problem, not a trade term. Every service shows its time, starting price and what is included.</p><div className="filters">{["All", "Emergency", "Home", "Commercial"].map((c) => <button key={c} type="button" className={filter === c ? "slot active" : "slot"} onClick={() => setFilter(c)}>{c}</button>)}</div></div></Fade>
+        <div className="tile mosaicHead"><p>Leaks, drains, pumps and fittings</p></div>
+        <div className="tile photoTile mosaicPhoto"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/-Three_Plumbers_with_Pipes_and_Tools-_MET_DP700384.jpg/1920px--Three_Plumbers_with_Pipes_and_Tools-_MET_DP700384.jpg" width="1920" height="1575" alt="Three plumbers with pipes and tools in an old photograph" loading="lazy" /></div>
+        <div className="tile figureTile"><p className="figure">4.9</p><p>Average from verified jobs, with the breakdown in Reviews.</p></div>
+        {visibleServices.map((s, i) => (
+          <div className={`tile serviceTile ${i % 3 === 0 ? "wide" : ""}`} key={s.id}>
+            <h3>{s.name}</h3><p>{s.problem}</p><p><strong>{s.time}.</strong> {s.price ? `From Rs ${s.price.toLocaleString()}.` : "Custom quote."}</p>
+            <ul>{s.includes.map((x) => <li key={x}>{x}</li>)}</ul>
+            <button className="btn secondary" type="button" onClick={() => { setService(s.id); document.getElementById("book")?.scrollIntoView({ behavior: "smooth" }); }}>Book this service</button>
           </div>
-          <div className="why-rows">
-            <div className="why-row">
-              <div className="why-icon"><FiClock /></div>
-              <div><h3>He actually arrives</h3><p>Dispatch comes from DHA, Clifton, Gulshan and Nazimabad hubs, not one van crossing the whole city. That is why the emergency aim is 30 minutes, not an all-day window.</p><span className="why-proof">Proof: area-wise dispatch, not a central queue.</span></div>
-            </div>
-            <div className="why-row">
-              <div className="why-icon"><FiDollarSign /></div>
-              <div><h3>Price first, wrench second</h3><p>We diagnose, give a fixed quote, and only then start work. Parts are shown separately on the invoice, so a small job cannot quietly become a big bill.</p><span className="why-proof">Proof: quote before work, parts listed separately.</span></div>
-            </div>
-            <div className="why-row">
-              <div className="why-icon"><FiShield /></div>
-              <div><h3>A stranger you can let inside</h3><p>Every technician is background-checked, CNIC-verified and trade-tested, and carries official FlowFix identification. You know who is at your door before the door opens.</p><span className="why-proof">Proof: verification before the first home visit.</span></div>
-            </div>
-            <div className="why-row">
-              <div className="why-icon"><FiCheckCircle /></div>
-              <div><h3>If it leaks again, we come back</h3><p>If the same fault returns within 30 days, we fix it free. A warranty that only exists on paper is not a warranty, so this one is written into the job itself.</p><span className="why-proof">Proof: same fault, 30 days, no labour charge.</span></div>
-            </div>
-          </div>
+        ))}
+      </section>
+
+      <section className="board" id="why" aria-label="Why FlowFix">
+        <div className="tile accentHeadTile"><h2>Why FlowFix works</h2></div>
+        <div className="tile proofTile"><h3>He actually arrives</h3><p>Dispatch by area, not a central queue. The area time is shown before you book.</p></div>
+        <div className="tile proofTile"><h3>Price first, wrench second</h3><p>The quote comes before work. Parts are listed separately, never folded into labour.</p></div>
+        <div className="tile proofTile"><h3>A stranger you can let inside</h3><p>You get the technician name and booking reference before the visit.</p></div>
+        <div className="tile proofTile"><h3>If it leaks again, we come back</h3><p>The same fault, 30 days, no labour charge.</p></div>
+        <div className="tile statTile"><p className="figure">30 min</p><p>On-time promise. If we are 30 minutes late without calling, Rs 1,000 comes off the labour.</p></div>
+        <div className="tile statTile"><p className="figure">Rs 0</p><p>Surprise-bill promise. No charge beyond the agreed quote without your agreement.</p></div>
+        <div className="tile statTile"><p className="figure">30 days</p><p>Guarantee on the same fault, with no labour charge.</p></div>
+      </section>
+
+      <div className="marquee" aria-hidden="true"><div className="marqueeTrack"><span>FlowFix. Fixed on the first visit. Karachi. </span><span>FlowFix. Fixed on the first visit. Karachi. </span></div></div>
+
+      <section className="board" id="how" aria-label="How it works">
+        <Fade><div className="tile sectionHeadTile"><h2>How it works</h2><p>Four stages, in order, darkest to lightest. Click a stage to open it.</p></div></Fade>
+        <div className="accordion">
+          {howStages.map((s, i) => (
+            <button key={s.name} type="button" className={`accPanel ${howOpen === i ? "open" : ""}`} onClick={() => setHowOpen(i)} aria-expanded={howOpen === i}>
+              <span className="accName">{s.name}</span>{howOpen === i && <span className="accText">{s.text}</span>}
+            </button>
+          ))}
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="section bg-light">
-        <div className="container">
-          <div className="section-title">
-            <h2>How FlowFix Works</h2>
-            <p>Getting your plumbing fixed has never been this hassle-free.</p>
-          </div>
-          <div className="steps-grid">
-            {[
-              { step: "1", title: "Book Online or Call", desc: "Submit our quick form or call +92 300 0000000 with details of your plumbing emergency." },
-              { step: "2", title: "Instant Dispatch", desc: "Our nearest mobile plumbing unit receives the alert and travels immediately to your location." },
-              { step: "3", title: "Diagnosis & Fix", desc: "Our technician inspects, provides a clear cost estimate, and executes professional repairs." },
-              { step: "4", title: "Test & Payment", desc: "We test everything thoroughly in front of you. Pay securely via cash or digital transfer." }
-            ].map((st, idx) => (
-              <div className="step-card" key={idx}>
-                <div className="step-badge">{st.step}</div>
-                <h3>{st.title}</h3>
-                <p>{st.desc}</p>
-              </div>
-            ))}
-          </div>
+      <section className="board" id="pricing" aria-label="Pricing">
+        <Fade><div className="tile sectionHeadTile"><h2>Pricing, in full</h2><p>What is included, and what is not. Parts beyond the allowance, opening a wall, and after-hours work are never hidden in the labour price.</p></div></Fade>
+        <div className="tile tableTile">
+          <table><thead><tr><th>What is compared</th>{PLANS.map((p) => <th key={p.name} className={p.recommended ? "rec" : ""}>{p.name}<br /><span>{p.price}</span></th>)}</tr></thead>
+          <tbody>{PLANS[0].rows.map((_, ri) => <tr key={ri}><td>{PLANS[0].rows[ri].split(":")[0]}</td>{PLANS.map((p) => <td key={p.name} className={p.recommended ? "rec" : ""}>{p.rows[ri].split(": ").slice(1).join(": ")}</td>)}</tr>)}
+          <tr><td>Book</td>{PLANS.map((p) => <td key={p.name} className={p.recommended ? "rec" : ""}><a className="btn" href="#book">{p.name === "Commercial" ? "Ask for a quote" : "Book this plan"}</a></td>)}</tr></tbody></table>
+          <p className="small">Not included: parts beyond the allowance, opening a wall to reach a pipe, and after-hours work unless the plan says otherwise. Each is quoted before work starts.</p>
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="section">
-        <div className="container">
-          <div className="section-title">
-            <h2>Simple, Transparent Pricing</h2>
-            <p>No hidden travel charges or secret fees. Standardized rates for Karachi homes.</p>
+      <section className="board" id="areas" aria-label="Areas">
+        <Fade><div className="tile sectionHeadTile"><h2>Karachi</h2><p>Choose a zone to see its areas and honest response times. Traffic can change a time, and we will call if it does.</p></div></Fade>
+        {AREAS.map((z, i) => (
+          <div className="tile areaBarTile" key={z.zone}>
+            <button type="button" className="areaBar" onClick={() => setAreaOpen(i)} aria-expanded={areaOpen === i}><span>{z.zone}</span><span>{areaOpen === i ? "−" : "+"}</span></button>
+            {areaOpen === i && <ul className="areaList">{z.areas.map((a) => <li key={a.name}><span>{a.name}</span><span>{a.time}</span></li>)}</ul>}
           </div>
-          <div className="pricing-grid">
-            {[
-              {
-                title: "Inspection & Minor Fix",
-                price: "Rs. 1,000",
-                period: "starting visit",
-                features: ["Expert diagnosis", "Minor washer/nut tightening", "Tap leak adjustments", "30-min arrival estimate"],
-                popular: false
-              },
-              {
-                title: "Standard Repair & Unclog",
-                price: "Rs. 2,500",
-                period: "per service",
-                features: ["Drain snake unclogging", "Flush tank mechanism change", "Geyser element check", "14-day warranty"],
-                popular: true
-              },
-              {
-                title: "Major Installation",
-                price: "Rs. 5,000+",
-                period: "custom quote",
-                features: ["Water pump installation", "Complete geyser replacement", "Extensive pipe re-routing", "30-day workmanship warranty"],
-                popular: false
-              }
-            ].map((plan, idx) => (
-              <div className={`pricing-card ${plan.popular ? 'popular' : ''}`} key={idx}>
-                {plan.popular && <span className="popular-badge">Most Popular</span>}
-                <h3>{plan.title}</h3>
-                <div className="price-tag">
-                  <span className="amount">{plan.price}</span>
-                  <span className="period">/ {plan.period}</span>
-                </div>
-                <ul className="pricing-features">
-                  {plan.features.map((feat, fIdx) => (
-                    <li key={fIdx}><FiCheckCircle /> {feat}</li>
-                  ))}
-                </ul>
-                <a href="#booking" className={`btn-${plan.popular ? 'primary' : 'outline'} full-width`}>
-                  Book This Service
-                </a>
-              </div>
-            ))}
-          </div>
+        ))}
+      </section>
+
+      <section className="board" id="reviews" aria-label="Reviews">
+        <Fade><div className="tile sectionHeadTile"><h2>Reviews</h2><p>Rating breakdown from verified jobs. Every review below shows its service and area, and the owner reply.</p></div></Fade>
+        <div className="tile breakdownTile"><p className="figure">4.9</p><p>5 stars: 86% · 4 stars: 11% · 3 stars: 2% · 2 stars or less: 1%</p><div className="bars"><p><span>5</span><i style={{ width: "86%" }} /></p><p><span>4</span><i style={{ width: "11%" }} /></p><p><span>3</span><i style={{ width: "2%" }} /></p></div></div>
+        <div className="reviewSplit">
+          <div className="reviewName"><p><strong>{REVIEWS[review].name}</strong></p><p>{REVIEWS[review].role}</p></div>
+          <div className="reviewQuote"><p>“{REVIEWS[review].quote}”</p><p className="small">{REVIEWS[review].reply}</p><div className="filters">{REVIEWS.map((r, i) => <button key={r.name} type="button" className={review === i ? "slot active" : "slot"} onClick={() => setReview(i)}>{r.name.split(" ")[0]}</button>)}</div></div>
         </div>
       </section>
 
-      {/* Service Areas Section */}
-      <section id="areas" className="section bg-light">
-        <div className="container">
-          <div className="section-title">
-            <h2>Proudly Serving All Over Karachi</h2>
-            <p>Our rapid response teams are strategically stationed across major residential and commercial zones.</p>
-          </div>
-          <div className="areas-grid">
-            {[
-              "Defence (DHA Phases 1-8)", "Clifton & Boat Basin", "Gulshan-e-Iqbal", 
-              "PECHS & Society Areas", "North Nazimabad", "Gulistan-e-Jauhar", 
-              "Bahria Town Karachi", "KDA Scheme 1", "FB Area & Shahrah-e-Faisal"
-            ].map((area, idx) => (
-              <div className="area-pill" key={idx}>
-                <FiMapPin /> {area}
-              </div>
-            ))}
-          </div>
-        </div>
+      <section className="board" id="faq" aria-label="Questions">
+        <div className="tile faqHeadTile"><h2>Questions, answered</h2></div>
+        <div className="tile faqSearchTile"><label>Search questions<input value={faqSearch} onChange={(e) => setFaqSearch(e.target.value)} placeholder="Try: price, guarantee, load shedding" /></label><div className="filters">{["All", "Pricing", "Booking", "Guarantee", "Areas", "General"].map((c) => <button key={c} type="button" className={faqCat === c ? "slot active" : "slot"} onClick={() => setFaqCat(c)}>{c}</button>)}</div></div>
+        {visibleFaqs.map((f, i) => <div className={`tile faqBand ${i % 2 ? "alt" : ""}`} key={f.q}><h3>{f.q}</h3><p>{f.a}</p></div>)}
+        {visibleFaqs.length === 0 && <div className="tile"><p>No question matches that search. Try a shorter word, or call the test number.</p></div>}
       </section>
 
-      {/* Reviews Section */}
-      <section id="reviews" className="section">
-        <div className="container">
-          <div className="section-title">
-            <h2>Trusted by Homeowners Across Karachi</h2>
-            <p>Read genuine feedback from our valued customers.</p>
-          </div>
-          <div className="reviews-grid">
-            {[
-              {
-                name: "Farhan Siddiqui",
-                location: "DHA Phase 6",
-                text: "Had a major pipe burst at 2 AM. FlowFix sent a technician within 25 minutes. Extremely professional, clean work, and very fair pricing. Lifesaver!",
-                stars: 5
-              },
-              {
-                name: "Dr. Ayesha Malik",
-                location: "Clifton Block 4",
-                text: "Our water pump stopped working right before office hours. The plumber arrived equipped with the exact spare motor parts needed. Fixed in under an hour.",
-                stars: 5
-              },
-              {
-                name: "Zainab Tariq",
-                location: "Gulshan-e-Iqbal",
-                text: "Transparent pricing is what I loved most. No bargaining needed—they told me the exact cost before starting the geyser installation. Highly recommended.",
-                stars: 5
-              }
-            ].map((rev, idx) => (
-              <div className="review-card" key={idx}>
-                <div className="stars">
-                  {[...Array(rev.stars)].map((_, sIdx) => (
-                    <FiStar key={sIdx} className="star-icon" />
-                  ))}
-                </div>
-                <p className="review-text">"{rev.text}"</p>
-                <div className="reviewer-info">
-                  <strong>{rev.name}</strong>
-                  <span>{rev.location}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <section className="board" id="cta" aria-label="Book now">
+        <div className="tile photoTile ctaPhoto"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Street_in_Karachi%2C_Pakistan.jpg/1920px-Street_in_Karachi%2C_Pakistan.jpg" width="1920" height="1224" alt="A street in Karachi, Pakistan" loading="lazy" /></div>
+        <div className="tile ctaTile"><h2>Book a plumber today</h2><p>Choose a service, an area and a time. Get the price before work starts.</p><a className="btn light" href="#book">Start booking</a><a className="btn light secondary" href={PHONE_LINK}>Call {PHONE}</a></div>
+        <div className="tile ctaFlat" />
       </section>
 
-      {/* FAQ Section */}
-      <section id="faq" className="section bg-light">
-        <div className="container">
-          <div className="section-title">
-            <h2>Frequently Asked Questions</h2>
-            <p>Got questions about our plumbing services in Karachi? We have answers.</p>
-          </div>
-          <div className="faq-container">
-            {[
-              {
-                q: "How quickly can a plumber reach my home in Karachi?",
-                a: "Our average dispatch time is 30 minutes. We have dedicated mobile units stationed in DHA, Clifton, Gulshan, PECHS, and North Nazimabad to ensure rapid emergency response."
-              },
-              {
-                q: "Are your plumbers verified and safe to invite home?",
-                a: "Yes, absolutely. All FlowFix plumbers undergo rigorous background checks, CNIC verification, and professional trade testing before stepping into your home."
-              },
-              {
-                q: "Do you charge extra for late-night emergency visits?",
-                a: "We operate 24/7 with transparent pricing standards. While emergency dispatch carries a standard night-visit fee, we always inform you of the exact cost upfront before starting any work."
-              },
-              {
-                q: "What payment methods do you accept?",
-                a: "We accept cash on completion, direct bank transfers (IBFT), and mobile wallet payments (JazzCash / EasyPaisa)."
-              },
-              {
-                q: "Do you offer any warranty on plumbing repairs?",
-                a: "Yes! All major repairs and installations come with a standard 30-day workmanship warranty. If the same issue recurs, our plumber will fix it at zero additional cost."
-              }
-            ].map((faq, idx) => (
-              <div className={`faq-item ${activeFaq === idx ? 'active' : ''}`} key={idx}>
-                <button className="faq-question" onClick={() => toggleFaq(idx)}>
-                  <span>{faq.q}</span>
-                  <FiChevronDown className="faq-icon" />
-                </button>
-                <AnimatePresence>
-                  {activeFaq === idx && (
-                    <motion.div 
-                      className="faq-answer"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <p>{faq.a}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final Call to Action */}
-      <section className="cta-section">
-        <div className="container cta-inner">
-          <h2>Facing a Plumbing Emergency in Karachi?</h2>
-          <p>Don’t let a leaking pipe or clogged drain ruin your day. Our expert technicians are ready to assist you right now.</p>
-          <div className="cta-actions">
-            <a href="tel:+923000000000" className="btn-accent">
-              <FiPhone /> Call +92 300 0000000
-            </a>
-            <a href="#booking" className="btn-outline-white">
-              Book Online
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container footer-grid">
-          <div className="footer-col">
-            <div className="logo footer-logo">
-              <FiDroplet className="logo-icon" />
-              <span>FlowFix<span className="accent">Plumbing</span></span>
-            </div>
-            <p>
-              Karachi’s premier 24/7 emergency plumbing service provider. Fast response, licensed professionals, transparent pricing.
-            </p>
-          </div>
-          <div className="footer-col">
-            <h4>Quick Links</h4>
-            <a href="#services">Services</a>
-            <a href="#why-us">Why Choose Us</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#areas">Service Areas</a>
-          </div>
-          <div className="footer-col">
-            <h4>Contact Info</h4>
-            <p><FiPhone /> +92 300 0000000</p>
-            <p><FiMail /> hello@flowfix.example</p>
-            <p><FiMapPin /> Karachi, Pakistan — test site, no real office address</p>
-            <p><FiClock /> Open 24 Hours, 7 Days a Week</p>
-          </div>
-        </div>
-        <div className="container footer-bottom">
-          <p>&copy; {new Date().getFullYear()} FlowFix Plumbing. All rights reserved. Serving Karachi with pride.</p>
-        </div>
+      <footer className="board footerBoard">
+        <div className="tile footerMark">{"FlowFix".split("").map((ch, i) => <span key={i} style={{ height: `${60 + ((i * 13) % 40)}%` }}>{ch}</span>)}</div>
+        <div className="tile footerCol"><h3>Services</h3><ul>{SERVICES.map((s) => <li key={s.id}><a href="#services">{s.name}</a></li>)}</ul></div>
+        <div className="tile footerCol"><h3>Help</h3><ul><li><a href="#pricing">Pricing</a></li><li><a href="#areas">Areas</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#faq">Questions</a></li><li><a href="#why">Why FlowFix</a></li><li><a href="#book">Book</a></li></ul></div>
+        <div className="tile footerCol"><h3>Contact</h3><p><a href={PHONE_LINK}>{PHONE} (test number)</a></p><p><a href={`mailto:${EMAIL}`}>{EMAIL}</a></p><p>Karachi, Pakistan. Test site, no real office address.</p></div>
+        <div className="tile footerCol"><h3>Hours</h3><p>Emergency: every day, all hours, by phone.</p><p>Scheduled visits: 8 am to 8 pm.</p><p>Licence reference for this test: KHI-PLM-2024-1187.</p></div>
+        <div className="tile footerBottom"><p>© FlowFix Plumbing, fictional test business. Pictures: “Three Plumbers with Pipes and Tools”, CC0, via Wikimedia Commons; “Plumber uses two wrenches to tighten a fitting” by Tomwsulcer, CC0, via Wikimedia Commons; “Street in Karachi, Pakistan” by Jan Kranendonk, CC BY-SA 4.0, via Wikimedia Commons; “Karachi street scene” by Jan Kranendonk, CC BY-SA 4.0, via Wikimedia Commons. The pictures show the trade and Karachi streets, and are not FlowFix's own team or premises.</p><a className="btn secondary" href="#top">Back to top</a></div>
       </footer>
-    </div>
+      <div className="stickyBar"><a className="btn" href={PHONE_LINK}>Call {PHONE}</a><a className="btn secondary" href="#book">Book</a></div>
+    </main>
   );
 }

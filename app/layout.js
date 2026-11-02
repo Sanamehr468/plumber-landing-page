@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "FlowFix Plumbing Karachi — 24/7 Emergency Plumber",
-  description: "Licensed, insured plumbers in Karachi. Emergency leak repair, drain cleaning, water heaters and installations with upfront pricing.",
+  title: "FlowFix Plumbing Karachi — Test Landing Page",
+  description: "Fictional test landing page for FlowFix Plumbing in Karachi. Emergency leak repair, drain cleaning, pump repair and installations with upfront pricing.",
 };
 
 export default function RootLayout({ children }) {
