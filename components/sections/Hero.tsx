@@ -133,7 +133,7 @@ export default function Hero() {
               </div>
 
               {/* Floating Stat Card 1: Emergency Response */}
-              <div className="absolute -top-6 -left-6 bg-surface/90 backdrop-blur-md border border-border rounded-2xl p-4 shadow-2xl flex items-center gap-3 animate-bounce-slow">
+              <div className="absolute -top-6 left-4 sm:-left-6 bg-surface/90 backdrop-blur-md border border-border rounded-2xl p-4 shadow-2xl flex items-center gap-3 animate-bounce-slow">
                 <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
                   <Clock className="w-5 h-5" />
                 </div>

@@ -121,7 +121,7 @@ export default function Testimonials() {
         <Reveal>
           <div className="max-w-4xl mx-auto relative">
             <div className="bg-surface border border-[#1E293B] rounded-2xl p-8 sm:p-12 relative shadow-xl overflow-hidden">
-              <div className="absolute top-6 right-6 text-[#1E293B]/6{-} pointer-events-none">
+              <div className="absolute top-6 right-6 text-[#1E293B] pointer-events-none">
                 <Quote className="w-24 h-24 text-accent/5" />
               </div>
 
