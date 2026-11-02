@@ -12,7 +12,6 @@ import {
   ArrowRight,
   Send
 } from 'lucide-react'
-import Reveal from '../Reveal'
 
 export default function Hero() {
   const [formSubmitted, setFormSubmitted] = useState(false)
@@ -35,30 +34,30 @@ export default function Hero() {
           
           {/* Left Column: Headline, Subtext, CTAs, Trust Badges */}
           <div className="lg:col-span-7 space-y-8">
-            <Reveal>
+            <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-surface text-accent border border-accent/20">
                 <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
                 <span>Licensed, Insured & Trusted Local Experts</span>
               </div>
-            </Reveal>
+            </div>
 
-            <Reveal delay={100}>
+            <div>
               <h1 className="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.1]">
                 Fast, Reliable Plumbing <br className="hidden sm:inline" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-cyan-200 to-white">
                   When You Need It Most
                 </span>
               </h1>
-            </Reveal>
+            </div>
 
-            <Reveal delay={200}>
+            <div>
               <p className="font-body text-base sm:text-lg text-muted max-w-2xl leading-relaxed">
                 From emergency leak repairs and stubborn clogs to complete water heater installations, FlowRight Plumbing delivers professional residential and commercial service 24 hours a day.
               </p>
-            </Reveal>
+            </div>
 
             {/* CTAs */}
-            <Reveal delay={300}>
+            <div>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 <a 
                   href="tel:+0001234567" 
@@ -75,10 +74,10 @@ export default function Hero() {
                   <ArrowRight className="w-4 h-4 text-accent" />
                 </a>
               </div>
-            </Reveal>
+            </div>
 
             {/* Trust Badges Row */}
-            <Reveal delay={400}>
+            <div>
               <div className="pt-6 border-t border-border grid grid-cols-3 gap-4">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-xl bg-surface border border-border flex items-center justify-center text-accent shrink-0">
@@ -113,20 +112,20 @@ export default function Hero() {
                   </div>
                 </div>
               </div>
-            </Reveal>
+            </div>
           </div>
 
           {/* Right Column: Image with floating stat cards & mini quick-quote form */}
           <div className="lg:col-span-5">
-            <Reveal delay={200} className="relative">
+            <div className="relative">
               {/* Main Image Frame */}
               <div className="relative w-full h-[460px] sm:h-[520px] rounded-3xl overflow-hidden border border-border shadow-2xl bg-surface">
                 <Image 
-                  src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80" 
+                  src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80" 
                   alt="Professional FlowRight plumber fixing a complex pipe system" 
                   fill
                   priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  sizes="(max-width: 1024px) 100vw, 560px"
                   className="object-cover object-center transform hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent"></div>
@@ -216,7 +215,7 @@ export default function Hero() {
                   </form>
                 )}
               </div>
-            </Reveal>
+            </div>
           </div>
 
         </div>

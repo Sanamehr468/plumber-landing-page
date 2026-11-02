@@ -83,7 +83,7 @@ export default function WhyChooseUs() {
                     alt="Professional plumber working on modern piping system"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes="(max-width: 1024px) 100vw, 640px"
                   />
                 </div>
                 <div className="absolute -bottom-6 -left-6 bg-surface border border-[#1E293B] p-5 rounded-2xl shadow-xl hidden sm:block max-w-xs">

@@ -115,6 +115,7 @@ export default function AreasPricing() {
                 src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop"
                 alt="Modern cityscape service coverage zone overview"
                 fill
+                sizes="(max-width: 1024px) 100vw, 640px"
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-70"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent" />
