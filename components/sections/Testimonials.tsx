@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
-import Reveal from '../Reveal';
 
 interface Review {
   id: number;
@@ -88,7 +87,7 @@ export default function Testimonials() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-gradient-to-r from-transparent via-[#1E293B] to-transparent" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Reveal>
+        <div>
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-surface text-accent border border-accent/20 mb-4 tracking-wide uppercase">
               Customer Reviews
@@ -100,10 +99,10 @@ export default function Testimonials() {
               Read verified feedback from real clients across our service areas who rely on FlowRight Plumbing for fast, honest, and expert work.
             </p>
           </div>
-        </Reveal>
+        </div>
 
         {/* Overall Rating Summary */}
-        <Reveal>
+        <div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 bg-surface border border-[#1E293B] rounded-2xl p-6 sm:p-8 max-w-xl mx-auto mb-12 shadow-lg">
             <div className="flex items-center gap-1 text-accent">
               {[...Array(5)].map((_, i) => (
@@ -115,10 +114,10 @@ export default function Testimonials() {
               <div className="text-sm text-muted">Based on over 1,250+ verified local reviews</div>
             </div>
           </div>
-        </Reveal>
+        </div>
 
         {/* Carousel Container */}
-        <Reveal>
+        <div>
           <div className="max-w-4xl mx-auto relative">
             <div className="bg-surface border border-[#1E293B] rounded-2xl p-8 sm:p-12 relative shadow-xl overflow-hidden">
               <div className="absolute top-6 right-6 text-[#1E293B] pointer-events-none">
@@ -186,7 +185,7 @@ export default function Testimonials() {
               ))}
             </div>
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

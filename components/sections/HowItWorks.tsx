@@ -1,7 +1,6 @@
 'use client'
 
 import { PhoneCall, Search, Wrench, ShieldCheck } from 'lucide-react'
-import Reveal from '../Reveal'
 
 const steps = [
   {
@@ -36,7 +35,7 @@ export default function HowItWorks() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <Reveal>
+          <div>
             <div>
               <span className="inline-block rounded-full text-xs font-semibold bg-primary text-accent border border-accent/20 px-3 py-1 mb-3">
                 Simple 4-Step Process
@@ -48,7 +47,7 @@ export default function HowItWorks() {
                 We have streamlined our dispatch and repair process so you can get back to your routine with zero hassle.
               </p>
             </div>
-          </Reveal>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
@@ -58,7 +57,7 @@ export default function HowItWorks() {
           {steps.map((step, index) => {
             const Icon = step.icon
             return (
-              <Reveal key={index} delay={index * 100}>
+              <div key={index}>
                 <div className="bg-primary border border-[#1E293B] rounded-2xl p-6 relative z-10 hover:border-accent/40 transition-all duration-300 h-full flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-6">
@@ -81,7 +80,7 @@ export default function HowItWorks() {
                     <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                   </div>
                 </div>
-              </Reveal>
+              </div>
             )
           })}
 

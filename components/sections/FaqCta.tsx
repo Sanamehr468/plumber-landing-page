@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { ChevronDown, Phone, Mail, Clock, ShieldCheck, CheckCircle2 } from 'lucide-react';
-import Reveal from '../Reveal';
 
 interface FaqItem {
   question: string;
@@ -82,7 +81,7 @@ export default function FaqCta() {
       {/* FAQ Section */}
       <section id="faq" className="py-20 md:py-28 bg-primary relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
+          <div>
             <div className="text-center max-w-3xl mx-auto mb-16">
               <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-surface text-accent border border-accent/20 mb-4 tracking-wide uppercase">
                 Frequently Asked Questions
@@ -94,13 +93,13 @@ export default function FaqCta() {
                 Everything you need to know about our dispatch times, pricing policies, and plumbing guarantees.
               </p>
             </div>
-          </Reveal>
+          </div>
 
           <div className="space-y-4 max-w-3xl mx-auto">
             {FAQS.map((faq, index) => {
               const isOpen = openFaq === index;
               return (
-                <Reveal key={index}>
+                <div key={index}>
                   <div className="bg-surface border border-[#1E293B] rounded-2xl overflow-hidden transition-colors hover:border-accent/40">
                     <button
                       onClick={() => toggleFaq(index)}
@@ -120,7 +119,7 @@ export default function FaqCta() {
                       </div>
                     )}
                   </div>
-                </Reveal>
+                </div>
               );
             })}
           </div>
@@ -130,7 +129,7 @@ export default function FaqCta() {
       {/* Contact Section */}
       <section id="contact" className="py-20 md:py-28 bg-surface relative overflow-hidden border-t border-[#1E293B]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
+          <div>
             <div className="text-center max-w-3xl mx-auto mb-16">
               <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-primary text-accent border border-accent/20 mb-4 tracking-wide uppercase">
                 Book Service / Get Quote
@@ -142,12 +141,12 @@ export default function FaqCta() {
                 Fill out the form below for fast dispatch or routine scheduling. For immediate emergencies, call us right away.
               </p>
             </div>
-          </Reveal>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             
             {/* Form Side */}
-            <Reveal className="lg:col-span-7">
+            <div className="lg:col-span-7">
               <div className="bg-primary border border-[#1E293B] rounded-2xl p-6 sm:p-10 shadow-xl">
                 {submitted ? (
                   <div className="text-center py-12 space-y-6">
@@ -249,10 +248,10 @@ export default function FaqCta() {
                   </form>
                 )}
               </div>
-            </Reveal>
+            </div>
 
             {/* Contact Details Side Panel */}
-            <Reveal className="lg:col-span-5">
+            <div className="lg:col-span-5">
               <div className="space-y-6">
                 <div className="bg-primary border border-[#1E293B] rounded-2xl p-6 sm:p-8">
                   <h3 className="font-display text-xl font-bold text-white mb-6">Direct Contact Info</h3>
@@ -306,7 +305,7 @@ export default function FaqCta() {
                   </div>
                 </div>
               </div>
-            </Reveal>
+            </div>
 
           </div>
         </div>

@@ -9,7 +9,6 @@ import {
   ArrowRight,
   Check
 } from 'lucide-react'
-import Reveal from '../Reveal'
 
 const servicesData = [
   {
@@ -63,23 +62,23 @@ export default function Services() {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <Reveal>
+          <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-surface text-accent border border-accent/20">
               <span>Comprehensive Solutions</span>
             </div>
-          </Reveal>
+          </div>
           
-          <Reveal delay={100}>
+          <div>
             <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
               Our Professional Plumbing Services
             </h2>
-          </Reveal>
+          </div>
           
-          <Reveal delay={200}>
+          <div>
             <p className="font-body text-base sm:text-lg text-muted">
               Whether you need routine maintenance or emergency midnight repairs, FlowRight Plumbing delivers unmatched craftsmanship backed by our satisfaction guarantee.
             </p>
-          </Reveal>
+          </div>
         </div>
 
         {/* Services Grid: 1 col mobile, 2 tablet, 3 desktop */}
@@ -87,7 +86,7 @@ export default function Services() {
           {servicesData.map((service, index) => {
             const IconComponent = service.icon
             return (
-              <Reveal key={index} delay={index * 100}>
+              <div key={index}>
                 <div className="group bg-surface border border-[#1E293B] rounded-2xl p-6 sm:p-8 hover:border-accent/40 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between h-full relative overflow-hidden">
                   
                   {/* Subtle hover gradient top glow */}
@@ -137,13 +136,13 @@ export default function Services() {
                   </div>
 
                 </div>
-              </Reveal>
+              </div>
             )
           })}
         </div>
 
         {/* Bottom Banner inside Services */}
-        <Reveal delay={200}>
+        <div>
           <div className="mt-16 bg-surface border border-border rounded-2xl p-8 sm:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-xl">
             <div className="space-y-2 text-center lg:text-left">
               <h3 className="font-display font-bold text-2xl text-white">Need a custom plumbing service not listed here?</h3>
@@ -164,7 +163,7 @@ export default function Services() {
               </a>
             </div>
           </div>
-        </Reveal>
+        </div>
 
       </div>
     </section>

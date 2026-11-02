@@ -2,7 +2,6 @@
 
 import { useState, useRef, useCallback } from 'react'
 import Image from 'next/image'
-import Reveal from '../Reveal'
 
 const galleryItems = [
   {
@@ -57,7 +56,7 @@ export default function Projects() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <Reveal>
+          <div>
             <div>
               <span className="inline-block rounded-full text-xs font-semibold bg-surface text-accent border border-accent/20 px-3 py-1 mb-3">
                 Our Craftsmanship
@@ -69,10 +68,10 @@ export default function Projects() {
                 Drag the interactive slider below to see how FlowRight transforms outdated or broken plumbing into pristine, reliable systems.
               </p>
             </div>
-          </Reveal>
+          </div>
         </div>
 
-        <Reveal>
+        <div>
           <div className="max-w-4xl mx-auto mb-16">
             <div 
               ref={sliderRef}
@@ -141,12 +140,12 @@ export default function Projects() {
               />
             </div>
           </div>
-        </Reveal>
+        </div>
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {galleryItems.map((item, index) => (
-            <Reveal key={index} delay={index * 150}>
+            <div key={index}>
               <div className="bg-surface border border-[#1E293B] rounded-2xl overflow-hidden hover:border-accent/40 transition-all duration-300 group">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
@@ -169,7 +168,7 @@ export default function Projects() {
                   </p>
                 </div>
               </div>
-            </Reveal>
+            </div>
           ))}
         </div>
 

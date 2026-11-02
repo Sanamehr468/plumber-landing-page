@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import { ShieldCheck, Award, Users, Clock, Star } from 'lucide-react'
-import Reveal from '../Reveal'
 
 export default function TrustBar() {
   const [inView, setInView] = useState(false)

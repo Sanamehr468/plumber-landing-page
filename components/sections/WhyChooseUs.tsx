@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import { DollarSign, Clock, ShieldCheck, Award } from 'lucide-react'
-import Reveal from '../Reveal'
 
 const benefits = [
   {
@@ -34,7 +33,7 @@ export default function WhyChooseUs() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <Reveal>
+            <div>
               <div className="space-y-6">
                 <div>
                   <span className="inline-block rounded-full text-xs font-semibold bg-surface text-accent border border-accent/20 px-3 py-1 mb-3">
@@ -70,11 +69,11 @@ export default function WhyChooseUs() {
                   })}
                 </div>
               </div>
-            </Reveal>
+            </div>
           </div>
 
           <div className="lg:col-span-6 order-1 lg:order-2">
-            <Reveal>
+            <div>
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 <div className="absolute -inset-4 bg-gradient-to-tr from-accent/20 to-copper/20 rounded-3xl blur-2xl -z-10 opacity-70" />
                 <div className="relative rounded-2xl overflow-hidden border border-[#1E293B] shadow-2xl bg-surface aspect-[4/3] sm:aspect-[16/10]">
@@ -98,7 +97,7 @@ export default function WhyChooseUs() {
                   </div>
                 </div>
               </div>
-            </Reveal>
+            </div>
           </div>
 
         </div>

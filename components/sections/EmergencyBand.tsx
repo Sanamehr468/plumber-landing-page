@@ -1,14 +1,13 @@
 'use client'
 
 import { Phone, Clock, ArrowRight } from 'lucide-react'
-import Reveal from '../Reveal'
 
 export default function EmergencyBand() {
   return (
     <section className="py-12 bg-accent text-primary relative overflow-hidden">
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#0A1128_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <Reveal>
+        <div>
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8 text-center lg:text-left">
             <div className="flex flex-col lg:flex-row items-center gap-6">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -45,7 +44,7 @@ export default function EmergencyBand() {
               </a>
             </div>
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   )

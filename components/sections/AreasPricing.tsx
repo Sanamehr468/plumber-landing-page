@@ -1,7 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
 import { MapPin, Check, ShieldCheck, Clock, Zap } from 'lucide-react';
-import Reveal from '../Reveal';
 
 const AREAS = [
   'Downtown',
@@ -61,7 +60,7 @@ export default function AreasPricing() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Areas Section Header */}
-        <Reveal>
+        <div>
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-primary text-accent border border-accent/20 mb-4 tracking-wide uppercase">
               Service Coverage & Transparent Rates
@@ -73,13 +72,13 @@ export default function AreasPricing() {
               We provide rapid dispatch across the metropolitan area with clear, upfront pricing and no surprise fees.
             </p>
           </div>
-        </Reveal>
+        </div>
 
         {/* Areas Grid & Visual Panel */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-24">
           
           {/* Left: Areas List */}
-          <Reveal className="lg:col-span-6">
+          <div className="lg:col-span-6">
             <div className="bg-primary border border-[#1E293B] rounded-2xl p-6 sm:p-8">
               <h3 className="font-display text-2xl font-bold text-white mb-4 flex items-center gap-3">
                 <MapPin className="w-6 h-6 text-accent" />
@@ -106,10 +105,10 @@ export default function AreasPricing() {
                 <span>Average arrival time across all zones is under 45 minutes for emergencies.</span>
               </div>
             </div>
-          </Reveal>
+          </div>
 
           {/* Right: Map-Style Visual Panel */}
-          <Reveal className="lg:col-span-6">
+          <div className="lg:col-span-6">
             <div className="relative h-[380px] sm:h-[450px] rounded-2xl overflow-hidden border border-[#1E293B] group">
               <Image
                 src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop"
@@ -142,11 +141,11 @@ export default function AreasPricing() {
                 </div>
               </div>
             </div>
-          </Reveal>
+          </div>
         </div>
 
         {/* Pricing Section Header */}
-        <Reveal>
+        <div>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h3 className="font-display text-2xl sm:text-3xl font-bold text-white mb-4">
               Transparent, Upfront Pricing
@@ -155,12 +154,12 @@ export default function AreasPricing() {
               No guesswork. You approve the quote before a single wrench turns.
             </p>
           </div>
-        </Reveal>
+        </div>
 
         {/* Pricing Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
           {PRICING_TIERS.map((tier, index) => (
-            <Reveal key={index} className="flex">
+            <div key={index} className="flex">
               <div
                 className={`w-full flex flex-col justify-between bg-primary rounded-2xl p-6 sm:p-8 border transition-all duration-300 relative ${
                   tier.popular
@@ -215,7 +214,7 @@ export default function AreasPricing() {
                   </a>
                 </div>
               </div>
-            </Reveal>
+            </div>
           ))}
         </div>
 
